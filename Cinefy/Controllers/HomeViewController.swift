@@ -15,6 +15,7 @@ class HomeViewController: UIViewController {
     let categories: [String] = ["Đề xuất", "Phim bộ", "Phim lẻ", "Thể loại"]
     var listFilm: [String] = []
     var imageFilm: [String] = []
+    let movieGenre: [String] = ["Marvel", "Viễn tưởng", "Hành động", "Keo lỳ slayyy"]
     
     @IBOutlet weak var categoryCollectionView: UICollectionView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -22,6 +23,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var qualityTag: CustomLabelTag!
     @IBOutlet weak var languageTag: CustomLabelTag!
     @IBOutlet weak var yearTag: CustomLabelTag!
+    @IBOutlet weak var movieGenreCollectionView: UICollectionView!
     
     @IBOutlet weak var pagerView: FSPagerView!{
         didSet {
@@ -48,7 +50,21 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //FS PagerView
+        self.pagerView.delegate = self
+        self.pagerView.dataSource = self
+        self.categoryCollectionView.delegate = self
+        self.categoryCollectionView.dataSource = self
+        self.movieGenreCollectionView.delegate = self
+        self.movieGenreCollectionView.dataSource = self
+        //Call API
+        self.fetchAPI()
         
+        //Setup UI
+        self.setupUI()
+    }
+    
+    func setupUI(){
         self.view.backgroundColor = ColorName.primary.color
         
         //Category CollectionView
@@ -61,18 +77,22 @@ class HomeViewController: UIViewController {
                                              forCellWithReuseIdentifier: CategoryCollectionViewCell.identifier)
         self.categoryCollectionView.backgroundColor = .clear
         self.categoryCollectionView.showsHorizontalScrollIndicator = false
-        self.categoryCollectionView.delegate = self
-        self.categoryCollectionView.dataSource = self
         
-        //FS PagerView
-        pagerView.delegate = self
-        pagerView.dataSource = self
         
         //Title Label
         titleLabel.textColor = ColorName.white.color
         
-        //Call API
-        self.fetchAPI()
+        //Movie Genre CollectionView
+        if let flowLayout = movieGenreCollectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
+            flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+            flowLayout.scrollDirection = .horizontal
+            flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 20)
+            flowLayout.itemSize = CGSize(width: 200, height: 90)
+        }
+        self.movieGenreCollectionView.register(UINib(nibName: MovieGenreCollectionViewCell.identifier, bundle: nil),
+                                               forCellWithReuseIdentifier: MovieGenreCollectionViewCell.identifier)
+        self.movieGenreCollectionView.showsHorizontalScrollIndicator = false
+        self.movieGenreCollectionView.backgroundColor = .clear
     }
     
 }
@@ -106,15 +126,42 @@ extension HomeViewController{
 }
 
 // MARK: - Category Delegate & Datasource
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories.count
+        if collectionView == categoryCollectionView {
+            return categories.count
+        } else if collectionView == movieGenreCollectionView {
+            return movieGenre.count
+        }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell ?? CategoryCollectionViewCell()
-        cell.titleLabel.text = categories[indexPath.row]
-        return cell
+        if collectionView == categoryCollectionView {
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CategoryCollectionViewCell.identifier,
+                for: indexPath
+            ) as! CategoryCollectionViewCell
+            cell.titleLabel.text = categories[indexPath.row]
+            return cell
+        } else if collectionView == movieGenreCollectionView {
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: MovieGenreCollectionViewCell.identifier,
+                for: indexPath
+            ) as! MovieGenreCollectionViewCell
+            cell.titleLabel.text = movieGenre[indexPath.row]
+            return cell
+        }
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        if collectionView == movieGenreCollectionView {
+            return CGSize(width: 160, height: 90)
+        }
+        
+        return CGSize(width: 50, height: 50)
     }
 }
 

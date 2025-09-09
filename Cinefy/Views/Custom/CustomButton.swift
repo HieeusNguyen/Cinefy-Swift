@@ -7,7 +7,6 @@
 
 import UIKit
 
-@IBDesignable
 final class CustomButton: UIButton {
     // MARK: - Properties
     @IBInspectable

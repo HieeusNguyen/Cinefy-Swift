@@ -7,7 +7,6 @@
 
 import UIKit
 
-@IBDesignable
 final class CustomLabelTag: UILabel {
     
     // MARK: - Properties
