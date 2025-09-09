@@ -74,25 +74,21 @@ class HomeViewController: UIViewController {
         //Call API
         self.fetchAPI()
     }
-
+    
 }
 
 // MARK: - Fetch API
 extension HomeViewController {
-    func fetchAPI() {
-        APIService.getHomePageData { response in
-            switch response{
-            case .success(let value):
-                for item in value.data.items{
-                    self.listFilm.append(item.name)
-                    self.imageFilm.append(item.thumbURL)
-                }
-                DispatchQueue.main.async {
-                    self.pagerView.reloadData()
-                    self.pageControl.numberOfPages = self.listFilm.count
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
+    func fetchAPI(){
+        Task{
+            do{
+                let homeData = try await APIService.getHomePageData()
+                self.listFilm = homeData.data.items.map { $0.name }
+                self.imageFilm = homeData.data.items.map { $0.thumbURL }
+                self.pagerView.reloadData()
+                self.pageControl.numberOfPages = self.listFilm.count
+            } catch {
+                print("Error: \(error)")
             }
         }
     }
@@ -139,7 +135,7 @@ extension HomeViewController: FSPagerViewDelegate, FSPagerViewDataSource {
     func pagerView(_ pagerView: FSPagerView, didSelectItemAt index: Int) {
         self.titleLabel.text = listFilm[index]
     }
-
+    
     func pagerViewDidScroll(_ pagerView: FSPagerView) {
         let index = pagerView.currentIndex
         if index < listFilm.count {
