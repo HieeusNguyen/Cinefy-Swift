@@ -1,0 +1,34 @@
+PODS:
+  - Alamofire (5.10.2)
+  - ESTabBarController-swift (2.8.0)
+  - FSPagerView (0.8.3)
+  - SDWebImage (5.21.1):
+    - SDWebImage/Core (= 5.21.1)
+  - SDWebImage/Core (5.21.1)
+  - SwiftGen (6.6.3)
+
+DEPENDENCIES:
+  - Alamofire
+  - ESTabBarController-swift
+  - FSPagerView
+  - SDWebImage
+  - SwiftGen (~> 6.0)
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - ESTabBarController-swift
+    - FSPagerView
+    - SDWebImage
+    - SwiftGen
+
+SPEC CHECKSUMS:
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
+  ESTabBarController-swift: 05593a6ad64700b03c0eb60ff625916370aa4136
+  FSPagerView: 670405b2f18e2a87fa37f20b00de783e562c25a8
+  SDWebImage: f29024626962457f3470184232766516dee8dfea
+  SwiftGen: 4993cbf71cbc4886f775e26f8d5c3a1188ec9f99
+
+PODFILE CHECKSUM: a8a1ffe1ee6af74830808580c50b6779ba741556
+
+COCOAPODS: 1.16.2
