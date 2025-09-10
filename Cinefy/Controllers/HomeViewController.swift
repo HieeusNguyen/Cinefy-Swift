@@ -16,6 +16,8 @@ class HomeViewController: UIViewController {
     var listFilm: [String] = []
     var imageFilm: [String] = []
     let movieGenre: [String] = ["Marvel", "Viễn tưởng", "Hành động", "Keo lỳ slayyy"]
+    var listActionMovie: [String] = []
+    var imageActionMovie: [String] = []
     
     @IBOutlet weak var categoryCollectionView: UICollectionView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -24,6 +26,11 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var languageTag: CustomLabelTag!
     @IBOutlet weak var yearTag: CustomLabelTag!
     @IBOutlet weak var movieGenreCollectionView: UICollectionView!
+    @IBOutlet weak var actionMovieCollectionView: UICollectionView!
+    
+    private let categoryHandler = CategoryCollectionViewHandler()
+    private let movieGenreHandler = MovieGenreCollectionViewHandler()
+    private let actionMovieHandler = ActionMovieCollectionViewHandler()
     
     @IBOutlet weak var pagerView: FSPagerView!{
         didSet {
@@ -50,15 +57,27 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Call API
+        self.fetchAPIgetHomePage()
+        self.fetchAPIActionMvie()
+        
         //FS PagerView
         self.pagerView.delegate = self
         self.pagerView.dataSource = self
-        self.categoryCollectionView.delegate = self
-        self.categoryCollectionView.dataSource = self
-        self.movieGenreCollectionView.delegate = self
-        self.movieGenreCollectionView.dataSource = self
-        //Call API
-        self.fetchAPI()
+        
+        // Category CollectionView
+        self.categoryHandler.categories = categories
+        self.categoryCollectionView.delegate = categoryHandler
+        self.categoryCollectionView.dataSource = categoryHandler
+        
+        // Movie CollectionView
+        self.movieGenreHandler.movieGenre = movieGenre
+        self.movieGenreCollectionView.delegate = movieGenreHandler
+        self.movieGenreCollectionView.dataSource = movieGenreHandler
+        
+        // ActionMovie CollectionView
+        self.actionMovieCollectionView.delegate = actionMovieHandler
+        self.actionMovieCollectionView.dataSource = actionMovieHandler
         
         //Setup UI
         self.setupUI()
@@ -84,22 +103,32 @@ class HomeViewController: UIViewController {
         
         //Movie Genre CollectionView
         if let flowLayout = movieGenreCollectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
-            flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+            flowLayout.estimatedItemSize = .zero
             flowLayout.scrollDirection = .horizontal
             flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 20)
-            flowLayout.itemSize = CGSize(width: 200, height: 90)
         }
         self.movieGenreCollectionView.register(UINib(nibName: MovieGenreCollectionViewCell.identifier, bundle: nil),
                                                forCellWithReuseIdentifier: MovieGenreCollectionViewCell.identifier)
         self.movieGenreCollectionView.showsHorizontalScrollIndicator = false
         self.movieGenreCollectionView.backgroundColor = .clear
+        
+        // ActionMovie CollectionView
+        if let flowLayout = actionMovieCollectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
+            flowLayout.estimatedItemSize = .zero
+            flowLayout.scrollDirection = .horizontal
+            flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 20)
+        }
+        self.actionMovieCollectionView.register(UINib(nibName: ActionMovieCollectionViewCell.identifier, bundle: nil),
+                                               forCellWithReuseIdentifier: ActionMovieCollectionViewCell.identifier)
+        self.actionMovieCollectionView.showsHorizontalScrollIndicator = false
+        self.actionMovieCollectionView.backgroundColor = .clear
     }
     
 }
 
 // MARK: - Fetch API
 extension HomeViewController {
-    func fetchAPI(){
+    func fetchAPIgetHomePage(){
         Task{
             do{
                 let homeData = try await APIService.getHomePageData()
@@ -108,6 +137,19 @@ extension HomeViewController {
                 self.pagerView.reloadData()
                 self.pageControl.numberOfPages = self.listFilm.count
             } catch {
+                print("Error: \(error)")
+            }
+        }
+    }
+    
+    func fetchAPIActionMvie(){
+        Task{
+            do{
+                let actionMovie = try await APIService.getActionMovieData()
+                self.actionMovieHandler.listActionMovie = actionMovie.data.items.map { $0.name }
+                self.actionMovieHandler.imageActionMovie = actionMovie.data.items.map { $0.thumbURL }
+                self.actionMovieCollectionView.reloadData()
+            }catch{
                 print("Error: \(error)")
             }
         }
@@ -126,42 +168,20 @@ extension HomeViewController{
 }
 
 // MARK: - Category Delegate & Datasource
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class CategoryCollectionViewHandler: NSObject, UICollectionViewDelegate, UICollectionViewDataSource {
+    var categories: [String] = []
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == categoryCollectionView {
-            return categories.count
-        } else if collectionView == movieGenreCollectionView {
-            return movieGenre.count
-        }
-        return 0
+        return categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == categoryCollectionView {
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: CategoryCollectionViewCell.identifier,
-                for: indexPath
-            ) as! CategoryCollectionViewCell
-            cell.titleLabel.text = categories[indexPath.row]
-            return cell
-        } else if collectionView == movieGenreCollectionView {
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: MovieGenreCollectionViewCell.identifier,
-                for: indexPath
-            ) as! MovieGenreCollectionViewCell
-            cell.titleLabel.text = movieGenre[indexPath.row]
-            return cell
-        }
-        return UICollectionViewCell()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        if collectionView == movieGenreCollectionView {
-            return CGSize(width: 160, height: 90)
-        }
-        
-        return CGSize(width: 50, height: 50)
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CategoryCollectionViewCell.identifier,
+            for: indexPath
+        ) as! CategoryCollectionViewCell
+        cell.titleLabel.text = categories[indexPath.row]
+        return cell
     }
 }
 
@@ -193,5 +213,50 @@ extension HomeViewController: FSPagerViewDelegate, FSPagerViewDataSource {
     
 }
 
+// MARK: - MovieGenre Delegate & Datasource & FlowLayout
+class MovieGenreCollectionViewHandler: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    var movieGenre: [String] = []
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return movieGenre.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MovieGenreCollectionViewCell.identifier,
+            for: indexPath
+        ) as! MovieGenreCollectionViewCell
+        cell.titleLabel.text = movieGenre[indexPath.row]
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 160, height: 90)
+    }
+}
 
-
+// MARK: - ActionMovie Delegate & Datasource & FlowLayout
+class ActionMovieCollectionViewHandler: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    var listActionMovie: [String] = []
+    var imageActionMovie: [String] = []
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return listActionMovie.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ActionMovieCollectionViewCell.identifier,
+            for: indexPath
+        ) as! ActionMovieCollectionViewCell
+        cell.titleLabel.text = listActionMovie[indexPath.row]
+        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(imageActionMovie[indexPath.row])") {
+            cell.imageView?.sd_setImage(with: thumbURL, placeholderImage: UIImage(named: "placeholder"))
+        }
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 150, height: 270)
+    }
+}

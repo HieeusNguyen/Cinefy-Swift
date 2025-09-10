@@ -8,7 +8,7 @@
 struct DataModel: Codable {
     let seoOnPage: SEOOnPage
     let items: [Item]
-    let itemsSportsVideos: [String]
+    let itemsSportsVideos: [String]?
     let params: Params
     let typeList: String
     let appDomainFrontend: String
@@ -130,9 +130,9 @@ struct Params: Codable {
     let filterYear: String
     let sortField: String
     let pagination: Pagination
-    let itemsUpdateInDay: Int
-    let totalSportsVideos: Int
-    let itemsSportsVideosUpdateInDay: Int
+    let itemsUpdateInDay: Int?
+    let totalSportsVideos: Int?
+    let itemsSportsVideosUpdateInDay: Int?
 
     enum CodingKeys: String, CodingKey {
         case typeSlug = "type_slug"
