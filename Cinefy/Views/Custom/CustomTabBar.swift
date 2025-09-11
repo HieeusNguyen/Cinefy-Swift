@@ -22,17 +22,23 @@ class TabbarProvider{
             tabBar.shadowImage = nil
             tabBar.backgroundColor = ColorName.black.color
         }
-        let v1 = HomeViewController()
-        let v2 = SearchViewController()
-        let v3 = ShowtimesViewController()
-        let v4 = ProfileViewController()
         
-        v1.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
-        v2.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "magnifyingglass.circle"), selectedImage: UIImage(systemName: "magnifyingglass.circle.fill"))
-        v3.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "calendar"), selectedImage: UIImage(systemName: "calendar.fill"))
-        v4.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "person"), selectedImage: UIImage(systemName: "person.fill"))
+        let home = HomeViewController()
+        let search = SearchViewController()
+        let showtimes = ShowtimesViewController()
+        let profile = ProfileViewController()
+        
+        let homeNav = UINavigationController(rootViewController: home)
+        let searchNav = UINavigationController(rootViewController: search)
+        let showtimesNav = UINavigationController(rootViewController: showtimes)
+        let profileNav = UINavigationController(rootViewController: profile)
+        
+        home.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        search.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "magnifyingglass.circle"), selectedImage: UIImage(systemName: "magnifyingglass.circle.fill"))
+        showtimes.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "calendar"), selectedImage: UIImage(systemName: "calendar.fill"))
+        profile.tabBarItem = ESTabBarItem.init( image: UIImage(systemName: "person"), selectedImage: UIImage(systemName: "person.fill"))
     
-        tabbarController.viewControllers = [v1, v2, v3, v4]
+        tabbarController.viewControllers = [homeNav, searchNav, showtimesNav, profileNav]
         
         return tabbarController
     }

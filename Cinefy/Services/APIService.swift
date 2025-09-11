@@ -11,20 +11,29 @@ import Alamofire
 public class APIService{
     
     // MARK: - API
+    static let FILM_PROTOCOL = "https://ophim1.com"
     static let DOMAIN_CDN_IMAGE = "https://img.ophim.live/uploads/movies/"
-    static let HOME_ENDPOINT = "https://ophim1.com/v1/api/home"
-    static let ACTION_MOVIE_ENDPOINT = "https://ophim1.com/v1/api/the-loai/hanh-dong"
+    static let HOME_ENDPOINT = "/v1/api/home"
+    static let ACTION_MOVIE_ENDPOINT = "/v1/api/the-loai/hanh-dong"
+    static let FILM_ENDPOINT = "/v1/api/phim/"
     
     // MARK: - FETCH API
     static func getHomePageData() async throws -> ResponseModel {
-        try await AF.request(HOME_ENDPOINT)
+        try await AF.request("\(FILM_PROTOCOL)\(HOME_ENDPOINT)")
             .validate()
             .serializingDecodable(ResponseModel.self)
             .value
     }
     
     static func getActionMovieData() async throws -> ResponseModel {
-        try await AF.request(ACTION_MOVIE_ENDPOINT)
+        try await AF.request("\(FILM_PROTOCOL)\(ACTION_MOVIE_ENDPOINT)")
+            .validate()
+            .serializingDecodable(ResponseModel.self)
+            .value
+    }
+    
+    static func getFilmInfo(slug: String) async throws -> ResponseModel {
+        try await AF.request("\(FILM_PROTOCOL)\(ACTION_MOVIE_ENDPOINT)\(slug)")
             .validate()
             .serializingDecodable(ResponseModel.self)
             .value

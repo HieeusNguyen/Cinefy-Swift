@@ -13,11 +13,10 @@ class HomeViewController: UIViewController {
     
     // MARK: - Properties
     let categories: [String] = ["Đề xuất", "Phim bộ", "Phim lẻ", "Thể loại"]
-    var listFilm: [String] = []
-    var imageFilm: [String] = []
     let movieGenre: [String] = ["Marvel", "Viễn tưởng", "Hành động", "Keo lỳ slayyy"]
-    var listActionMovie: [String] = []
-    var imageActionMovie: [String] = []
+    var currentFilm: String?
+    var homeData: ResponseModel?
+    var actionMovieData: ResponseModel?
     
     @IBOutlet weak var categoryCollectionView: UICollectionView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -131,11 +130,9 @@ extension HomeViewController {
     func fetchAPIgetHomePage(){
         Task{
             do{
-                let homeData = try await APIService.getHomePageData()
-                self.listFilm = homeData.data.items.map { $0.name }
-                self.imageFilm = homeData.data.items.map { $0.thumbURL }
+                self.homeData = try await APIService.getHomePageData()
                 self.pagerView.reloadData()
-                self.pageControl.numberOfPages = self.listFilm.count
+                self.pageControl.numberOfPages = self.homeData?.data.items.count ?? 0
             } catch {
                 print("Error: \(error)")
             }
@@ -145,9 +142,8 @@ extension HomeViewController {
     func fetchAPIActionMvie(){
         Task{
             do{
-                let actionMovie = try await APIService.getActionMovieData()
-                self.actionMovieHandler.listActionMovie = actionMovie.data.items.map { $0.name }
-                self.actionMovieHandler.imageActionMovie = actionMovie.data.items.map { $0.thumbURL }
+                self.actionMovieData = try await APIService.getActionMovieData()
+                self.actionMovieHandler.actionMovieData = actionMovieData
                 self.actionMovieCollectionView.reloadData()
             }catch{
                 print("Error: \(error)")
@@ -159,9 +155,15 @@ extension HomeViewController {
 // MARK: - Actions
 extension HomeViewController{
     @IBAction func playFilmPressed(_ sender: UIButton) {
-        
+        if let currentFilm = self.currentFilm{
+            let playFilmVC = PlayFilmViewController()
+            playFilmVC.hidesBottomBarWhenPushed = true
+            playFilmVC.filmURL = currentFilm
+            navigationController?.pushViewController(playFilmVC, animated: true)
+        }else{
+            return
+        }
     }
-    
     
     @IBAction func infoFilmPressed(_ sender: UIButton) {
     }
@@ -189,26 +191,27 @@ class CategoryCollectionViewHandler: NSObject, UICollectionViewDelegate, UIColle
 extension HomeViewController: FSPagerViewDelegate, FSPagerViewDataSource {
     func pagerView(_ pagerView: FSPagerView, cellForItemAt index: Int) -> FSPagerViewCell {
         let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
-        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(imageFilm[index])") {
+        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(homeData?.data.items[index].thumbURL ?? "")") {
             cell.imageView?.sd_setImage(with: thumbURL, placeholderImage: UIImage(named: "placeholder"))
         }
         return cell
     }
     
     func numberOfItems(in pagerView: FSPagerView) -> Int {
-        return listFilm.count
+        return homeData?.data.items.count ?? 0
     }
     
     func pagerView(_ pagerView: FSPagerView, didSelectItemAt index: Int) {
-        self.titleLabel.text = listFilm[index]
+        self.titleLabel.text = homeData?.data.items[index].name
     }
     
     func pagerViewDidScroll(_ pagerView: FSPagerView) {
         let index = pagerView.currentIndex
-        if index < listFilm.count {
-            titleLabel.text = listFilm[index]
+        if index < homeData?.data.items.count ?? 0 {
+            titleLabel.text = homeData?.data.items[index].name
         }
-        self.pageControl.currentPage = pagerView.currentIndex
+        self.pageControl.currentPage = index
+        self.currentFilm = homeData?.data.items[index].slug
     }
     
 }
@@ -237,11 +240,10 @@ class MovieGenreCollectionViewHandler: NSObject, UICollectionViewDelegate, UICol
 
 // MARK: - ActionMovie Delegate & Datasource & FlowLayout
 class ActionMovieCollectionViewHandler: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
-    var listActionMovie: [String] = []
-    var imageActionMovie: [String] = []
+    var actionMovieData: ResponseModel?
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return listActionMovie.count
+        return actionMovieData?.data.items.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -249,8 +251,8 @@ class ActionMovieCollectionViewHandler: NSObject, UICollectionViewDelegate, UICo
             withReuseIdentifier: ActionMovieCollectionViewCell.identifier,
             for: indexPath
         ) as! ActionMovieCollectionViewCell
-        cell.titleLabel.text = listActionMovie[indexPath.row]
-        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(imageActionMovie[indexPath.row])") {
+        cell.titleLabel.text = actionMovieData?.data.items[indexPath.row].name
+        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(actionMovieData?.data.items[indexPath.row].thumbURL ?? "")") {
             cell.imageView?.sd_setImage(with: thumbURL, placeholderImage: UIImage(named: "placeholder"))
         }
         return cell

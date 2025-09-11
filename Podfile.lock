@@ -1,14 +1,26 @@
 PODS:
   - Alamofire (5.10.2)
+  - BMPlayer (1.3.2):
+    - BMPlayer/Full (= 1.3.2)
+  - BMPlayer/Core (1.3.2)
+  - BMPlayer/Full (1.3.2):
+    - BMPlayer/Core
+    - NVActivityIndicatorView (~> 4.7.0)
+    - SnapKit (~> 5.0.0)
   - ESTabBarController-swift (2.8.0)
   - FSPagerView (0.8.3)
+  - NVActivityIndicatorView (4.7.0):
+    - NVActivityIndicatorView/Presenter (= 4.7.0)
+  - NVActivityIndicatorView/Presenter (4.7.0)
   - SDWebImage (5.21.1):
     - SDWebImage/Core (= 5.21.1)
   - SDWebImage/Core (5.21.1)
+  - SnapKit (5.0.1)
   - SwiftGen (6.6.3)
 
 DEPENDENCIES:
   - Alamofire
+  - BMPlayer (~> 1.3.0)
   - ESTabBarController-swift
   - FSPagerView
   - SDWebImage
@@ -17,18 +29,24 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - BMPlayer
     - ESTabBarController-swift
     - FSPagerView
+    - NVActivityIndicatorView
     - SDWebImage
+    - SnapKit
     - SwiftGen
 
 SPEC CHECKSUMS:
   Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
+  BMPlayer: e4b241bd088644d7b89d991a1a65d1b1615d19b3
   ESTabBarController-swift: 05593a6ad64700b03c0eb60ff625916370aa4136
   FSPagerView: 670405b2f18e2a87fa37f20b00de783e562c25a8
+  NVActivityIndicatorView: b19ddab2576f805cbe0fb2306cba3476e09a1dea
   SDWebImage: f29024626962457f3470184232766516dee8dfea
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftGen: 4993cbf71cbc4886f775e26f8d5c3a1188ec9f99
 
-PODFILE CHECKSUM: a8a1ffe1ee6af74830808580c50b6779ba741556
+PODFILE CHECKSUM: bb6c17905fd621bf437141bd955f62e3916a8ea8
 
 COCOAPODS: 1.16.2
