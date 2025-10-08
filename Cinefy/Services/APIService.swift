@@ -33,7 +33,9 @@ public class APIService{
     }
     
     static func getFilmInfo(slug: String) async throws -> ResponseModel {
-        try await AF.request("\(FILM_PROTOCOL)\(ACTION_MOVIE_ENDPOINT)\(slug)")
+        let url = "\(FILM_PROTOCOL)\(FILM_ENDPOINT)\(slug)"
+        print("👉 Request URL:", url)
+        return try await AF.request("\(FILM_PROTOCOL)\(FILM_ENDPOINT)\(slug)")
             .validate()
             .serializingDecodable(ResponseModel.self)
             .value

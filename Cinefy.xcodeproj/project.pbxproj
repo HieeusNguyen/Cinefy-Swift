@@ -26,8 +26,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4D4C44874C2EB8D47C426A13 /* Pods-RoPhim.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RoPhim.debug.xcconfig"; path = "Target Support Files/Pods-RoPhim/Pods-RoPhim.debug.xcconfig"; sourceTree = "<group>"; };
-		4EE943404AB665482BF94573 /* Pods-RoPhim.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RoPhim.release.xcconfig"; path = "Target Support Files/Pods-RoPhim/Pods-RoPhim.release.xcconfig"; sourceTree = "<group>"; };
 		8332EAEAE0DC66698A64F0D6 /* Pods_Cinefy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cinefy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C580D7D8947E71E0561F9AFE /* Pods-Cinefy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cinefy.debug.xcconfig"; path = "Target Support Files/Pods-Cinefy/Pods-Cinefy.debug.xcconfig"; sourceTree = "<group>"; };
 		CC8751492E5C8C26007034FC /* Cinefy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cinefy.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,8 +69,6 @@
 		57E656F8E8DDCC2EF4485C8A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				4D4C44874C2EB8D47C426A13 /* Pods-RoPhim.debug.xcconfig */,
-				4EE943404AB665482BF94573 /* Pods-RoPhim.release.xcconfig */,
 				C580D7D8947E71E0561F9AFE /* Pods-Cinefy.debug.xcconfig */,
 				D0DD123EC9432B04BE433DF6 /* Pods-Cinefy.release.xcconfig */,
 			);

@@ -54,6 +54,11 @@ class HomeViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //Call API
@@ -132,7 +137,7 @@ extension HomeViewController {
             do{
                 self.homeData = try await APIService.getHomePageData()
                 self.pagerView.reloadData()
-                self.pageControl.numberOfPages = self.homeData?.data.items.count ?? 0
+                self.pageControl.numberOfPages = self.homeData?.data.items?.count ?? 0
             } catch {
                 print("Error: \(error)")
             }
@@ -159,6 +164,7 @@ extension HomeViewController{
             let playFilmVC = PlayFilmViewController()
             playFilmVC.hidesBottomBarWhenPushed = true
             playFilmVC.filmURL = currentFilm
+//            playFilmVC.filmURL = "https://ophim1.com/v1/api/phim/ti-nu"
             navigationController?.pushViewController(playFilmVC, animated: true)
         }else{
             return
@@ -191,27 +197,27 @@ class CategoryCollectionViewHandler: NSObject, UICollectionViewDelegate, UIColle
 extension HomeViewController: FSPagerViewDelegate, FSPagerViewDataSource {
     func pagerView(_ pagerView: FSPagerView, cellForItemAt index: Int) -> FSPagerViewCell {
         let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
-        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(homeData?.data.items[index].thumbURL ?? "")") {
+        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(homeData?.data.items?[index].thumbURL ?? "")") {
             cell.imageView?.sd_setImage(with: thumbURL, placeholderImage: UIImage(named: "placeholder"))
         }
         return cell
     }
     
     func numberOfItems(in pagerView: FSPagerView) -> Int {
-        return homeData?.data.items.count ?? 0
+        return homeData?.data.items?.count ?? 0
     }
     
     func pagerView(_ pagerView: FSPagerView, didSelectItemAt index: Int) {
-        self.titleLabel.text = homeData?.data.items[index].name
+        self.titleLabel.text = homeData?.data.items?[index].name
     }
     
     func pagerViewDidScroll(_ pagerView: FSPagerView) {
         let index = pagerView.currentIndex
-        if index < homeData?.data.items.count ?? 0 {
-            titleLabel.text = homeData?.data.items[index].name
+        if index < homeData?.data.items?.count ?? 0 {
+            titleLabel.text = homeData?.data.items?[index].name
         }
         self.pageControl.currentPage = index
-        self.currentFilm = homeData?.data.items[index].slug
+        self.currentFilm = homeData?.data.items?[index].slug
     }
     
 }
@@ -243,7 +249,7 @@ class ActionMovieCollectionViewHandler: NSObject, UICollectionViewDelegate, UICo
     var actionMovieData: ResponseModel?
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return actionMovieData?.data.items.count ?? 0
+        return actionMovieData?.data.items?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -251,8 +257,8 @@ class ActionMovieCollectionViewHandler: NSObject, UICollectionViewDelegate, UICo
             withReuseIdentifier: ActionMovieCollectionViewCell.identifier,
             for: indexPath
         ) as! ActionMovieCollectionViewCell
-        cell.titleLabel.text = actionMovieData?.data.items[indexPath.row].name
-        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(actionMovieData?.data.items[indexPath.row].thumbURL ?? "")") {
+        cell.titleLabel.text = actionMovieData?.data.items?[indexPath.row].name
+        if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(actionMovieData?.data.items?[indexPath.row].thumbURL ?? "")") {
             cell.imageView?.sd_setImage(with: thumbURL, placeholderImage: UIImage(named: "placeholder"))
         }
         return cell
