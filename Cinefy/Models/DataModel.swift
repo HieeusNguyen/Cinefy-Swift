@@ -112,7 +112,7 @@ struct Item: Codable {
 }
 
 struct TMDB: Codable {
-    let type: String
+    let type: String?
     let id: String
     let season: Int?
     let voteAverage: Double?

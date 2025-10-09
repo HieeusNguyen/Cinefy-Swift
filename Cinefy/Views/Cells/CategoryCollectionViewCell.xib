@@ -9,7 +9,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="CategoryCollectionViewCell" customModule="RoPhim" customModuleProvider="target">
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="CategoryCollectionViewCell" customModule="Cinefy" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="132" height="50"/>
             <autoresizingMask key="autoresizingMask"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -17,7 +17,7 @@
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AzR-FQ-fVD">
-                        <rect key="frame" x="12" y="6" width="108" height="38"/>
+                        <rect key="frame" x="12" y="8" width="108" height="34"/>
                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -27,8 +27,8 @@
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="AzR-FQ-fVD" secondAttribute="trailing" constant="12" id="1zB-7g-7nO"/>
-                <constraint firstItem="AzR-FQ-fVD" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="6" id="ZSw-uB-gsB"/>
-                <constraint firstAttribute="bottom" secondItem="AzR-FQ-fVD" secondAttribute="bottom" constant="6" id="dtd-77-FVx"/>
+                <constraint firstItem="AzR-FQ-fVD" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="8" id="ZSw-uB-gsB"/>
+                <constraint firstAttribute="bottom" secondItem="AzR-FQ-fVD" secondAttribute="bottom" constant="8" id="dtd-77-FVx"/>
                 <constraint firstItem="AzR-FQ-fVD" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="12" id="oGx-hR-NgK"/>
             </constraints>
             <size key="customSize" width="132" height="50"/>

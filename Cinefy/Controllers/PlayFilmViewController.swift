@@ -12,7 +12,7 @@ class PlayFilmViewController: UIViewController {
     
     // MARK: - Properties
     var filmURL: String?
-    var filmData: ResponseModel?
+    private var filmData: ResponseModel?
     private var isFullscreen: Bool = false
     private var isMovie: Bool = false
     
@@ -103,7 +103,7 @@ class PlayFilmViewController: UIViewController {
             flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
             flowLayout.scrollDirection = .vertical
             flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-            flowLayout.minimumLineSpacing = 5
+            flowLayout.minimumLineSpacing = 10
         }
         self.episodesCollectionView.register(UINib(nibName: EpisodeCollectionViewCell.identifier, bundle: nil), forCellWithReuseIdentifier: EpisodeCollectionViewCell.identifier)
         self.episodesCollectionView.backgroundColor = .clear
@@ -112,20 +112,19 @@ class PlayFilmViewController: UIViewController {
     
     // MARK: - Setup Player
     private func setupPlayer(with url: URL) {
-        player?.pause()
-        playerLayer?.removeFromSuperlayer()
-        player = nil
-        playerLayer = nil
+        let newItem = AVPlayerItem(url: url)
         
-        player = AVPlayer(url: url)
-        
-        playerLayer = AVPlayerLayer(player: player)
-        playerLayer?.videoGravity = .resizeAspect
-        playerLayer?.frame = videoContainerView.bounds
-        videoContainerView.layer.addSublayer(playerLayer!)
-        
-        frontView.backgroundColor = .clear
-        videoContainerView.bringSubviewToFront(frontView)
+        if player == nil {
+            player = AVPlayer(playerItem: newItem)
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer?.videoGravity = .resizeAspect
+            playerLayer?.frame = videoContainerView.bounds
+            videoContainerView.layer.addSublayer(playerLayer!)
+            frontView.backgroundColor = .clear
+            videoContainerView.bringSubviewToFront(frontView)
+        } else {
+            player?.replaceCurrentItem(with: newItem)
+        }
         
         player?.play()
     }
@@ -149,7 +148,6 @@ extension PlayFilmViewController {
         Task {
             do {
                 self.filmData = try await APIService.getFilmInfo(slug: self.filmURL!)
-                print("Film Data: \(filmData!)")
                 self.titleFilm.text = filmData?.data.seoOnPage?.titleHead
                 self.categoryFilterHandler.movieData = filmData
                 self.episodesHandler.movieData = filmData
@@ -157,12 +155,13 @@ extension PlayFilmViewController {
                 DispatchQueue.main.async {
                     self.categoryFilterCollectionView.reloadData()
                     self.episodesCollectionView.reloadData()
+                    self.episodesCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: [])
                 }
                 if let link = filmData?.data.item?.episodes?.first?.serverData.first?.linkM3U8,
                    let url = URL(string: link) {
                     setupPlayer(with: url)
                 } else {
-                    print("Không tìm thấy link m3u8")
+                    print("Not found link m3u8")
                 }
                 
             } catch {
@@ -221,6 +220,7 @@ class CategoryFilterCollectionViewHandler: NSObject, UICollectionViewDelegate, U
 class EpisodesCollectionViewHandler: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     var movieData: ResponseModel?
     weak var delegate: EpisodesCollectionViewHandlerDelegate?
+    var selectedIndex: IndexPath = IndexPath(item: 0, section: 0)
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return movieData?.data.item?.episodes![0].serverData.count ?? 0
@@ -232,13 +232,33 @@ class EpisodesCollectionViewHandler: NSObject, UICollectionViewDelegate, UIColle
             for: indexPath
         ) as! EpisodeCollectionViewCell
         cell.titleLabel.text = movieData?.data.item?.episodes?[0].serverData[indexPath.row].name
+        
+        if indexPath == selectedIndex {
+            cell.backgroundColor = ColorName.white.color
+            cell.titleLabel.textColor = ColorName.black.color
+            cell.layer.cornerRadius = 6
+            cell.layer.masksToBounds = true
+            cell.layer.borderWidth = 2
+            cell.layer.borderColor = ColorName.white.color.cgColor
+        } else {
+            cell.backgroundColor = .clear
+            cell.titleLabel.textColor = .white
+        }
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath
+        collectionView.reloadData()
+        
         if let link = movieData?.data.item?.episodes?[0].serverData[indexPath.row].linkM3U8,
            let url = URL(string: link){
             delegate?.didSelectEpisode(with: url)
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: (collectionView.frame.width - 33)/4, height: 30)
     }
 }

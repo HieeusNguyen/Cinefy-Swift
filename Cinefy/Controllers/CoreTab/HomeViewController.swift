@@ -82,6 +82,7 @@ class HomeViewController: UIViewController {
         // ActionMovie CollectionView
         self.actionMovieCollectionView.delegate = actionMovieHandler
         self.actionMovieCollectionView.dataSource = actionMovieHandler
+        self.actionMovieHandler.parentVC = self
         
         //Setup UI
         self.setupUI()
@@ -247,6 +248,7 @@ class MovieGenreCollectionViewHandler: NSObject, UICollectionViewDelegate, UICol
 // MARK: - ActionMovie Delegate & Datasource & FlowLayout
 class ActionMovieCollectionViewHandler: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     var actionMovieData: ResponseModel?
+    weak var parentVC: UIViewController?
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return actionMovieData?.data.items?.count ?? 0
@@ -265,6 +267,17 @@ class ActionMovieCollectionViewHandler: NSObject, UICollectionViewDelegate, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 150, height: 270)
+        return CGSize(width: 120, height: 200)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let currentFilm = self.actionMovieData?.data.items?[indexPath.row].slug{
+            let playFilmVC = PlayFilmViewController()
+            playFilmVC.hidesBottomBarWhenPushed = true
+            playFilmVC.filmURL = currentFilm
+            parentVC?.navigationController?.pushViewController(playFilmVC, animated: true)
+        }else{
+            return
+        }
     }
 }

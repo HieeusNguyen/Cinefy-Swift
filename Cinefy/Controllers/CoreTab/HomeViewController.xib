@@ -33,7 +33,7 @@
                     <rect key="frame" x="0.0" y="124" width="440" height="764"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="H7u-Xn-8Vx">
-                            <rect key="frame" x="0.0" y="0.0" width="440" height="1129.3333333333333"/>
+                            <rect key="frame" x="0.0" y="0.0" width="440" height="1059.3333333333333"/>
                             <subviews>
                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="fUL-mu-KQe">
                                     <rect key="frame" x="0.0" y="0.0" width="440" height="40"/>
@@ -207,10 +207,10 @@
                                     </constraints>
                                 </stackView>
                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="eRx-mx-igJ">
-                                    <rect key="frame" x="20" y="829.33333333333337" width="420" height="270.00000000000011"/>
+                                    <rect key="frame" x="20" y="829.33333333333337" width="420" height="200.00000000000011"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="270" id="ep2-45-sq1"/>
+                                        <constraint firstAttribute="height" constant="200" id="ep2-45-sq1"/>
                                     </constraints>
                                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="xN7-6h-CsO">
                                         <size key="itemSize" width="128" height="128"/>
