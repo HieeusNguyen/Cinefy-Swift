@@ -8,10 +8,10 @@
 import UIKit
 
 class EpisodeCollectionViewCell: UICollectionViewCell {
-    
-    static let identifier = "EpisodeCollectionViewCell"
 
     // MARK: - Properties
+    static let identifier = "EpisodeCollectionViewCell"
+    
     @IBOutlet weak var titleLabel: UILabel!
     
     // MARK: - Init

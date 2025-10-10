@@ -165,7 +165,6 @@ extension HomeViewController{
             let playFilmVC = PlayFilmViewController()
             playFilmVC.hidesBottomBarWhenPushed = true
             playFilmVC.filmURL = currentFilm
-//            playFilmVC.filmURL = "https://ophim1.com/v1/api/phim/ti-nu"
             navigationController?.pushViewController(playFilmVC, animated: true)
         }else{
             return
