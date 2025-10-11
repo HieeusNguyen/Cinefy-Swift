@@ -9,6 +9,7 @@ target 'Cinefy' do
   pod 'Alamofire'
   pod 'SDWebImage'
   pod 'SwiftGen', '~> 6.0'
+  pod 'PanModal'
 end
 
 post_install do |installer|
