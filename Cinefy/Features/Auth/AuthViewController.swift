@@ -174,6 +174,9 @@ private extension AuthViewController {
                     print("Đăng nhập Google thất bại:", error)
                 } else {
                     print("Đăng nhập Google thành công")
+                    DispatchQueue.main.async {
+                        self.dismiss(animated: true)
+                    }
                 }
             }
         }

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_9" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -11,11 +12,13 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ProfileViewController" customModule="Cinefy" customModuleProvider="target">
             <connections>
+                <outlet property="emailLabel" destination="V1K-yB-wMM" id="Sjq-US-Uvu"/>
                 <outlet property="loginButton" destination="19K-hl-lrK" id="QNR-G5-Pjz"/>
+                <outlet property="managerAccountButton" destination="mmt-qy-aDO" id="Fnq-s3-bVe"/>
                 <outlet property="menuTableView" destination="dLG-V9-UZ1" id="dHP-XW-NPM"/>
                 <outlet property="registerButton" destination="lUk-ve-t7C" id="85e-yV-Oti"/>
-                <outlet property="titleLabel" destination="iwZ-mH-cUv" id="Gjb-NN-Ju6"/>
                 <outlet property="userImageView" destination="X3C-Jx-KMX" id="6vo-Tg-kbn"/>
+                <outlet property="usernameLabel" destination="iwZ-mH-cUv" id="KFs-YN-3dh"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -35,12 +38,23 @@
                             </constraints>
                             <imageReference key="image" image="person.circle" catalog="system" symbolScale="large"/>
                         </imageView>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tài khoản" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iwZ-mH-cUv">
-                            <rect key="frame" x="46" y="7.9999999999999982" width="374" height="20.333333333333329"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <nil key="textColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Emo-XX-YiC">
+                            <rect key="frame" x="46" y="0.6666666666666714" width="374" height="34.666666666666664"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tên người dùng" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iwZ-mH-cUv">
+                                    <rect key="frame" x="0.0" y="0.0" width="374" height="20.333333333333332"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V1K-yB-wMM">
+                                    <rect key="frame" x="0.0" y="20.333333333333329" width="374" height="14.333333333333336"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                        </stackView>
                     </subviews>
                     <constraints>
                         <constraint firstItem="X3C-Jx-KMX" firstAttribute="leading" secondItem="4PL-cg-08R" secondAttribute="leading" id="7eF-CB-tTv"/>
@@ -50,7 +64,7 @@
                     <rect key="frame" x="10" y="180" width="420" height="46"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="19K-hl-lrK" customClass="CustomButton" customModule="Cinefy" customModuleProvider="target">
-                            <rect key="frame" x="0.0" y="0.0" width="205" height="46"/>
+                            <rect key="frame" x="0.0" y="0.0" width="133.33333333333334" height="46"/>
                             <state key="normal" title="Button"/>
                             <buttonConfiguration key="configuration" style="filled" title="Đăng nhập" imagePadding="10">
                                 <imageReference key="image" image="person.fill" catalog="system" symbolScale="medium"/>
@@ -62,7 +76,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lUk-ve-t7C" customClass="CustomButton" customModule="Cinefy" customModuleProvider="target">
-                            <rect key="frame" x="215" y="0.0" width="205" height="46"/>
+                            <rect key="frame" x="143.33333333333331" y="0.0" width="133.33333333333331" height="46"/>
                             <state key="normal" title="Button"/>
                             <buttonConfiguration key="configuration" style="filled" title="Đăng ký">
                                 <fontDescription key="titleFontDescription" type="boldSystem" pointSize="16"/>
@@ -70,6 +84,17 @@
                             </buttonConfiguration>
                             <connections>
                                 <action selector="registerPressed:" destination="-1" eventType="touchUpInside" id="r4f-3U-Neq"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mmt-qy-aDO" customClass="CustomButton" customModule="Cinefy" customModuleProvider="target">
+                            <rect key="frame" x="286.66666666666669" y="0.0" width="133.33333333333331" height="46"/>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="filled" title="Quản lý tài khoản">
+                                <fontDescription key="titleFontDescription" type="boldSystem" pointSize="16"/>
+                                <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </buttonConfiguration>
+                            <connections>
+                                <action selector="managerAccountPressed:" destination="-1" eventType="touchUpInside" id="N1u-yt-6hQ"/>
                             </connections>
                         </button>
                     </subviews>
