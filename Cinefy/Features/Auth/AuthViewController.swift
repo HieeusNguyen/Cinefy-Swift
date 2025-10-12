@@ -7,100 +7,138 @@
 
 import UIKit
 import PanModal
+import FirebaseCore
+import FirebaseAuth
+import GoogleSignIn
+import Combine
 
-class AuthViewController: UIViewController {
+// MARK: - AuthViewController
+final class AuthViewController: UIViewController {
     
-    // MARK: - Outlet
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var subTitleLabel: UILabel!
-    @IBOutlet weak var nameTextField: UITextField!
-    @IBOutlet weak var emailTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var confirmPasswordTextField: UITextField!
-    @IBOutlet weak var mainButton: UIButton!
-    @IBOutlet weak var forgotPasswordLabel: UILabel!
-    @IBOutlet weak var googleButton: UIButton!
+    // MARK: - IBOutlets
+    @IBOutlet private weak var titleLabel: UILabel!
+    @IBOutlet private weak var subTitleLabel: UILabel!
+    @IBOutlet private weak var nameTextField: UITextField!
+    @IBOutlet private weak var emailTextField: UITextField!
+    @IBOutlet private weak var passwordTextField: UITextField!
+    @IBOutlet private weak var confirmPasswordTextField: UITextField!
+    @IBOutlet private weak var mainButton: UIButton!
+    @IBOutlet private weak var forgotPasswordLabel: UILabel!
+    @IBOutlet private weak var googleButton: UIButton!
     
     // MARK: - Properties
     var mode: AuthMode = .login
-    var isShortFormEnabled = true
+    private var isShortFormEnabled = true
+    private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Lifecycle
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        nameTextField.delegate = self
-        emailTextField.delegate = self
-        passwordTextField.delegate = self
-        confirmPasswordTextField.delegate = self
-        
-        // Setup UI
-        self.setupUI()
-
-        passwordTextField.isSecureTextEntry = true
-        
-        forgotPasswordLabel.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(forgotPasswordTapped))
-        forgotPasswordLabel.addGestureRecognizer(tapGesture)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
-                                               name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+        setupDelegates()
+        setupUI()
+        setupKeyboardObservers()
+        setupForgotPasswordTap()
     }
     
-    // MARK: - Layout
-    private func setupUI(){
+    // MARK: - Deinit
+    deinit {
+        cancellables.forEach { $0.cancel() }
+    }
+}
+
+// MARK: - Setup UI
+private extension AuthViewController {
+    
+    func setupDelegates() {
+        [nameTextField, emailTextField, passwordTextField, confirmPasswordTextField]
+            .forEach { $0?.delegate = self }
+    }
+    
+    func setupUI() {
+        // Configure toggle buttons
+        let toggleButton = makeToggleButton(action: #selector(togglePasswordVisibility(_:)))
+        let toggleConfirmButton = makeToggleButton(action: #selector(toggleConfirmPasswordVisibility(_:)))
         
-        let toggleButton = UIButton(type: .custom)
-        toggleButton.setImage(UIImage(systemName: "eye.slash"), for: .normal)
-        toggleButton.tintColor = .gray
-        toggleButton.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
+        passwordTextField.setRightView(toggleButton, padding: 16)
+        confirmPasswordTextField.setRightView(toggleConfirmButton, padding: 16)
         
-        passwordTextField.rightView = toggleButton
-        passwordTextField.rightViewMode = .always
+        // Configure buttons
         mainButton.tintColor = ColorName.lightYellow.color
         googleButton.tintColor = .darkGray
         googleButton.configuration?.imagePadding = 10
-        googleButton.setAttributedTitle(NSAttributedString(string: "Đăng nhập bằng Google", attributes: [.font: UIFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor : ColorName.white.color]), for: .normal)
+        googleButton.setAttributedTitle(
+            NSAttributedString(
+                string: "Đăng nhập bằng Google",
+                attributes: [
+                    .font: UIFont.systemFont(ofSize: 16, weight: .bold),
+                    .foregroundColor: ColorName.white.color
+                ]
+            ),
+            for: .normal
+        )
         
+        // Configure labels & mode
         switch mode {
         case .login:
-            titleLabel.attributedText = NSAttributedString(string: "Đăng nhập", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold)])
+            titleLabel.attributedText = NSAttributedString(
+                string: "Đăng nhập",
+                attributes: [.font: UIFont.systemFont(ofSize: 22, weight: .bold)]
+            )
             subTitleLabel.text = "Nếu bạn chưa có tài khoản, đăng ký ngay"
             nameTextField.isHidden = true
             confirmPasswordTextField.isHidden = true
-            mainButton.setAttributedTitle(NSAttributedString(string: "Đăng nhập", attributes: [.font: UIFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor : ColorName.black.color]), for: .normal)
-            
+            mainButton.setAttributedTitle(
+                NSAttributedString(
+                    string: "Đăng nhập",
+                    attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold),
+                                 .foregroundColor: ColorName.black.color]
+                ),
+                for: .normal
+            )
         case .register:
-            titleLabel.attributedText = NSAttributedString(string: "Đăng ký", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold)])
+            titleLabel.attributedText = NSAttributedString(
+                string: "Đăng ký",
+                attributes: [.font: UIFont.systemFont(ofSize: 22, weight: .bold)]
+            )
             subTitleLabel.text = "Nếu bạn đã có tài khoản, đăng nhập ngay"
             forgotPasswordLabel.isHidden = true
-            mainButton.setAttributedTitle(NSAttributedString(string: "Đăng ký", attributes: [.font: UIFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor : ColorName.black.color]), for: .normal)
+            mainButton.setAttributedTitle(
+                NSAttributedString(
+                    string: "Đăng ký",
+                    attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold),
+                                 .foregroundColor: ColorName.black.color]
+                ),
+                for: .normal
+            )
         }
     }
     
+    func setupForgotPasswordTap() {
+        forgotPasswordLabel.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(forgotPasswordTapped))
+        forgotPasswordLabel.addGestureRecognizer(tapGesture)
+    }
+    
+    func makeToggleButton(action: Selector) -> UIButton {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = .gray
+        button.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        button.addTarget(self, action: action, for: .touchUpInside)
+        return button
+    }
 }
 
-// MARK: - Action
-extension AuthViewController{
-    
-    @objc private func keyboardWillShow(notification: Notification) {
-        isShortFormEnabled = false
-        panModalTransition(to: .longForm)
-    }
-    
-    @objc private func keyboardWillHide(notification: Notification) {
-        isShortFormEnabled = true
-        panModalTransition(to: .shortForm)
-    }
+// MARK: - Actions
+private extension AuthViewController {
     
     @objc func togglePasswordVisibility(_ sender: UIButton) {
-        passwordTextField.isSecureTextEntry.toggle() 
-        
-        let imageName = passwordTextField.isSecureTextEntry ? "eye.slash" : "eye"
-        sender.setImage(UIImage(systemName: imageName), for: .normal)
+        toggleSecureEntry(for: passwordTextField, sender: sender)
     }
-
+    
+    @objc func toggleConfirmPasswordVisibility(_ sender: UIButton) {
+        toggleSecureEntry(for: confirmPasswordTextField, sender: sender)
+    }
     
     @objc func forgotPasswordTapped() {
         print("Forgot password tapped")
@@ -111,23 +149,76 @@ extension AuthViewController{
     }
     
     @IBAction func googleButtonPressed(_ sender: UIButton) {
-        print("Google Button Pressed")
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { result, error in
+            guard error == nil else {
+                print("Lỗi đăng nhập Google:", error!)
+                return
+            }
+            
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString
+            else { return }
+            
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: user.accessToken.tokenString
+            )
+            
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("Đăng nhập Google thất bại:", error)
+                } else {
+                    print("Đăng nhập Google thành công")
+                }
+            }
+        }
     }
 }
 
-// MARK: - UITextField Delegate
+// MARK: - Combine Bindings
+private extension AuthViewController {
+    
+    func setupKeyboardObservers() {
+        let willShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification).map { _ in true }
+        let willHide = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification).map { _ in false }
+        
+        Publishers.Merge(willShow, willHide)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] visible in
+                guard let self = self else { return }
+                
+                if visible {
+                    guard self.isShortFormEnabled else { return }
+                    self.isShortFormEnabled = false
+                    self.panModalTransition(to: .longForm)
+                } else {
+                    guard !self.isShortFormEnabled else { return }
+                    self.isShortFormEnabled = true
+                    self.panModalTransition(to: .shortForm)
+                }
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: - UITextFieldDelegate
 extension AuthViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        switch textField{
+        switch textField {
         case nameTextField:
             emailTextField.becomeFirstResponder()
         case emailTextField:
             passwordTextField.becomeFirstResponder()
         case passwordTextField:
-            if mode == .login{
+            if mode == .login {
                 textField.resignFirstResponder()
-            }else{
+            } else {
                 confirmPasswordTextField.becomeFirstResponder()
             }
         default:
@@ -138,32 +229,33 @@ extension AuthViewController: UITextFieldDelegate {
 }
 
 // MARK: - PanModalPresentable
-extension AuthViewController: PanModalPresentable{
-    var panScrollable: UIScrollView? {
-        return nil
-    }
+extension AuthViewController: PanModalPresentable {
+    
+    var panScrollable: UIScrollView? { nil }
     
     var shortFormHeight: PanModalHeight {
-        if isShortFormEnabled{
-            if mode == .login{
-                return .contentHeight(430)
-            }else{
-                return .contentHeight(510)
-            }
-        }else{
+        if isShortFormEnabled {
+            return mode == .login ? .contentHeight(430) : .contentHeight(510)
+        } else {
             return longFormHeight
         }
     }
     
-    var anchorModalToLongForm: Bool {
-        return false
-    }
+    var anchorModalToLongForm: Bool { false }
     
     func willTransition(to state: PanModalPresentationController.PresentationState) {
-        guard isShortFormEnabled, case .longForm = state
-        else { return }
-        
+        guard isShortFormEnabled, case .longForm = state else { return }
         isShortFormEnabled = false
         panModalSetNeedsLayoutUpdate()
+    }
+}
+
+// MARK: - Private Helpers
+private extension AuthViewController {
+    
+    func toggleSecureEntry(for textField: UITextField, sender: UIButton) {
+        textField.isSecureTextEntry.toggle()
+        let imageName = textField.isSecureTextEntry ? "eye.slash" : "eye"
+        sender.setImage(UIImage(systemName: imageName), for: .normal)
     }
 }

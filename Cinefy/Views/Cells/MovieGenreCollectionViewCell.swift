@@ -8,11 +8,12 @@
 import UIKit
 
 class MovieGenreCollectionViewCell: UICollectionViewCell {
+    
+    // MARK: - IBOutlets
+    @IBOutlet weak var titleLabel: UILabel!
 
     // MARK: - Properties
     static let identifier: String = "MovieGenreCollectionViewCell"
-    
-    @IBOutlet weak var titleLabel: UILabel!
     private var gradientLayer: CAGradientLayer?
 
     // MARK: - Setup UI

@@ -10,6 +10,10 @@ target 'Cinefy' do
   pod 'SDWebImage'
   pod 'SwiftGen', '~> 6.0'
   pod 'PanModal'
+  pod 'FirebaseCore'
+  pod 'FirebaseFirestore'
+  pod 'FirebaseAuth'
+  pod 'GoogleSignIn'
 end
 
 post_install do |installer|

@@ -8,14 +8,16 @@
 import UIKit
 
 class MenuTableViewCell: UITableViewCell {
+    
+    // MARK: - IBOutlets
+    @IBOutlet weak var menuImageView: UIImageView!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var arrowRightImageView: UIImageView!
 
     // MARK: - Properties
     static let identifier = "MenuTableViewCell"
     
-    @IBOutlet weak var menuImageView: UIImageView!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var arrowRightImageView: UIImageView!
-    
+    // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
         contentView.backgroundColor = ColorName.primary.color

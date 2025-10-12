@@ -7,12 +7,13 @@
 
 import UIKit
 
-class SearchViewController: UIViewController {
+final class SearchViewController: UIViewController {
     
-    // MARK: - Properties
+    // MARK: - IBOutlets
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var searchResultCollectionView: UICollectionView!
     
+    // MARK: - Properties
     var searchData: ResponseModel?
     
     /// Hidden NavigationBar

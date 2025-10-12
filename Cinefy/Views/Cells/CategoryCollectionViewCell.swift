@@ -9,12 +9,13 @@ import UIKit
 
 class CategoryCollectionViewCell: UICollectionViewCell {
     
-    // MARK: - PROPERTIES
-    static let identifier = "CategoryCollectionViewCell"
-
+    // MARK: - IBOutlets
     @IBOutlet weak var titleLabel: UILabel!
     
-    // MARK: - INIT
+    // MARK: - Properties
+    static let identifier = "CategoryCollectionViewCell"
+    
+    // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
         titleLabel.textColor = ColorName.white.color

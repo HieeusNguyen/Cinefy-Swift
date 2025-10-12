@@ -7,16 +7,18 @@
 
 import UIKit
 import PanModal
+import FirebaseAuth
 
-class ProfileViewController: UIViewController{
+final class ProfileViewController: UIViewController{
     
-    // MARK: - Properties
+    // MARK: - IBOutlets
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var registerButton: UIButton!
     @IBOutlet weak var menuTableView: UITableView!
     
+    // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -49,22 +51,31 @@ extension ProfileViewController{
     
     @IBAction func loginPressed(_ sender: UIButton) {
         print("Login Pressed")
-        let loginVC = AuthViewController()
-        loginVC.mode = .login
-        presentPanModal(loginVC)
+        if Auth.auth().currentUser != nil{
+            print("User already logged in")
+        }else{
+            let loginVC = AuthViewController()
+            loginVC.mode = .login
+            presentPanModal(loginVC)
+        }
     }
     
     @IBAction func registerPressed(_ sender: UIButton) {
         print("Register Pressed")
-        let registerVC = AuthViewController()
-        registerVC.mode = .register
-        presentPanModal(registerVC)
+        if Auth.auth().currentUser != nil{
+            print("User already logged in")
+        }else{
+            let registerVC = AuthViewController()
+            registerVC.mode = .register
+            presentPanModal(registerVC)
+        }
     }
 }
 
+// MARK: - CollectionView Delegate & DataSource
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return 8
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,6 +103,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
         case 6:
             cell.menuImageView.image = UIImage(systemName: "questionmark.square")
             cell.titleLabel.text = "Liên hệ"
+        case 7:
+            cell.menuImageView.image = UIImage(systemName: "plus")
+            cell.titleLabel.text = "Đăng xuất"
         default: break
         }
         
@@ -115,6 +129,14 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
             print("chính sách bảo mật")
         case 6:
             print("liên hệ")
+        case 7:
+            let firebaseAuth = Auth.auth()
+            do {
+                try firebaseAuth.signOut()
+                print("Đăng xuất thành công")
+            } catch let signOutError as NSError {
+                print("Error signing out: %@", signOutError)
+            }
         default: break
         }
     }

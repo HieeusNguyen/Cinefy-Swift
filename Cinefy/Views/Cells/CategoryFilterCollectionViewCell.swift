@@ -9,10 +9,11 @@ import UIKit
 
 class CategoryFilterCollectionViewCell: UICollectionViewCell {
     
+    // MARK: - IBOutlets
+    @IBOutlet weak var titleLabel: UILabel!
+    
     // MARK: - Properties
     static let identifier = "CategoryFilterCollectionViewCell"
-
-    @IBOutlet weak var titleLabel: UILabel!
     
     // MARK: Init
     override func awakeFromNib() {

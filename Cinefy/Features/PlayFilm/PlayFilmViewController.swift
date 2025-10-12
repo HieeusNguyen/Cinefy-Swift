@@ -10,12 +10,7 @@ import AVFoundation
 
 class PlayFilmViewController: UIViewController {
     
-    // MARK: - Properties
-    var filmURL: String?
-    private var filmData: ResponseModel?
-    private var isFullscreen: Bool = false
-    private var isMovie: Bool = false
-    
+    // MARK: - IBOutlets
     @IBOutlet weak var videoContainerView: UIView!
     @IBOutlet weak var frontView: UIView!
     private var player: AVPlayer?
@@ -26,11 +21,19 @@ class PlayFilmViewController: UIViewController {
     @IBOutlet weak var descriptionFilm: UILabel!
     @IBOutlet weak var episodesLabel: UILabel!
     
+    // MARK: - Properties
+    var filmURL: String?
+    private var filmData: ResponseModel?
+    private var isFullscreen: Bool = false
+    private var isMovie: Bool = false
+    private let categoryFilterHandler = CategoryFilterCollectionViewHandler()
+    private let episodesHandler = EpisodesCollectionViewHandler()
+    
     // CollectionView
     @IBOutlet weak var categoryFilterCollectionView: UICollectionView!
-    private let categoryFilterHandler = CategoryFilterCollectionViewHandler()
+    
     @IBOutlet weak var episodesCollectionView: UICollectionView!
-    private let episodesHandler = EpisodesCollectionViewHandler()
+    
     // Constraints
     @IBOutlet weak var aspectRatioConstraint: NSLayoutConstraint!
     @IBOutlet weak var bottomToLabelConstraint: NSLayoutConstraint!

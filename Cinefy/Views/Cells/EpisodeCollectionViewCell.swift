@@ -8,11 +8,12 @@
 import UIKit
 
 class EpisodeCollectionViewCell: UICollectionViewCell {
+    
+    // MARK: - IBOutlets
+    @IBOutlet weak var titleLabel: UILabel!
 
     // MARK: - Properties
     static let identifier = "EpisodeCollectionViewCell"
-    
-    @IBOutlet weak var titleLabel: UILabel!
     
     // MARK: - Init
     override func awakeFromNib() {

@@ -9,15 +9,9 @@ import UIKit
 import FSPagerView
 import SDWebImage
 
-class HomeViewController: UIViewController {
+final class HomeViewController: UIViewController {
     
-    // MARK: - Properties
-    let categories: [String] = ["Đề xuất", "Phim bộ", "Phim lẻ", "Thể loại"]
-    let movieGenre: [String] = ["Marvel", "Viễn tưởng", "Hành động", "Keo lỳ slayyy"]
-    var currentFilm: String?
-    var homeData: ResponseModel?
-    var actionMovieData: ResponseModel?
-    
+    // MARK: - IBOutlets
     @IBOutlet weak var categoryCollectionView: UICollectionView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var imdbScoreTag: CustomLabelTag!
@@ -26,10 +20,6 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var yearTag: CustomLabelTag!
     @IBOutlet weak var movieGenreCollectionView: UICollectionView!
     @IBOutlet weak var actionMovieCollectionView: UICollectionView!
-    
-    private let categoryHandler = CategoryCollectionViewHandler()
-    private let movieGenreHandler = MovieGenreCollectionViewHandler()
-    private let actionMovieHandler = ActionMovieCollectionViewHandler()
     
     @IBOutlet weak var pagerView: FSPagerView!{
         didSet {
@@ -54,6 +44,18 @@ class HomeViewController: UIViewController {
         }
     }
     
+    // MARK: - Properties
+    let categories: [String] = ["Đề xuất", "Phim bộ", "Phim lẻ", "Thể loại"]
+    let movieGenre: [String] = ["Marvel", "Viễn tưởng", "Hành động", "Keo lỳ slayyy"]
+    var currentFilm: String?
+    var homeData: ResponseModel?
+    var actionMovieData: ResponseModel?
+    
+    private let categoryHandler = CategoryCollectionViewHandler()
+    private let movieGenreHandler = MovieGenreCollectionViewHandler()
+    private let actionMovieHandler = ActionMovieCollectionViewHandler()
+    
+    // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -88,6 +90,7 @@ class HomeViewController: UIViewController {
         self.setupUI()
     }
     
+    // MARK: - Setup UI
     func setupUI(){
         self.view.backgroundColor = ColorName.primary.color
         

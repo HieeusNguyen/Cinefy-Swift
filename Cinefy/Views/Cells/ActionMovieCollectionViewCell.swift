@@ -8,12 +8,13 @@
 import UIKit
 
 class ActionMovieCollectionViewCell: UICollectionViewCell {
+    
+    // MARK: - IBOutlets
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var titleLabel: UILabel!
 
     // MARK: - Properties
     static let identifier: String = "ActionMovieCollectionViewCell"
-    
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var titleLabel: UILabel!
     
     // MARK: - Setup UI
     override func awakeFromNib() {
