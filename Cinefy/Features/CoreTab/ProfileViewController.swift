@@ -172,6 +172,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
             do {
                 try firebaseAuth.signOut()
                 DispatchQueue.main.async {
+                    ShowMessage.show("Đăng xuất thành công", type: .success, in: self)
                     self.setupMenuItems()
                     self.updateUIForLoginState()
                     self.menuTableView.reloadData()

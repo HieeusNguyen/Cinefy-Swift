@@ -145,41 +145,15 @@ private extension AuthViewController {
     }
     
     @IBAction func mainButtonPressed(_ sender: UIButton) {
-        print("Main Button Pressed")
+        if mode == .login {
+            self.performLogin()
+        }else{
+            self.performRegister()
+        }
     }
     
     @IBAction func googleButtonPressed(_ sender: UIButton) {
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-        
-        let config = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = config
-        
-        GIDSignIn.sharedInstance.signIn(withPresenting: self) { result, error in
-            guard error == nil else {
-                print("Lỗi đăng nhập Google:", error!)
-                return
-            }
-            
-            guard let user = result?.user,
-                  let idToken = user.idToken?.tokenString
-            else { return }
-            
-            let credential = GoogleAuthProvider.credential(
-                withIDToken: idToken,
-                accessToken: user.accessToken.tokenString
-            )
-            
-            Auth.auth().signIn(with: credential) { authResult, error in
-                if let error = error {
-                    print("Đăng nhập Google thất bại:", error)
-                } else {
-                    print("Đăng nhập Google thành công")
-                    DispatchQueue.main.async {
-                        self.dismiss(animated: true)
-                    }
-                }
-            }
-        }
+        self.performGoogleSignIn()
     }
 }
 
@@ -260,5 +234,101 @@ private extension AuthViewController {
         textField.isSecureTextEntry.toggle()
         let imageName = textField.isSecureTextEntry ? "eye.slash" : "eye"
         sender.setImage(UIImage(systemName: imageName), for: .normal)
+    }
+}
+
+// MARK: - Authentication Logic
+private extension AuthViewController {
+    
+    func performLogin() {
+        guard let email = emailTextField.text, !email.isEmpty,
+              let password = passwordTextField.text, !password.isEmpty else {
+            ShowMessage.show("Vui lòng nhập đầy đủ thông tin", type: .error, in: self)
+            return
+        }
+        
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                ShowMessage.show(error.localizedDescription, type: .error, in: self)
+            } else {
+                ShowMessage.show("Đăng nhập thành công", type: .success, in: self){
+                    self.dismiss(animated: true)
+                }
+            }
+        }
+    }
+    
+    func performRegister() {
+        guard let name = nameTextField.text, !name.isEmpty,
+              let email = emailTextField.text, !email.isEmpty,
+              let password = passwordTextField.text, !password.isEmpty,
+              let confirmPassword = confirmPasswordTextField.text, !confirmPassword.isEmpty else {
+            ShowMessage.show("Vui lòng nhập đầy đủ thông tin", type: .error, in: self)
+            return
+        }
+        
+        guard password == confirmPassword else {
+            ShowMessage.show("Mật khẩu xác nhận không khớp", type: .error, in: self)
+            return
+        }
+        
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                ShowMessage.show(error.localizedDescription, type: .error, in: self)
+            } else {
+                let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+                changeRequest?.displayName = name
+                changeRequest?.commitChanges { _ in
+                    print("Đăng ký thành công")
+                }
+            }
+        }
+    }
+    
+    func performGoogleSignIn() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            ShowMessage.show("Lỗi cấu hình Google Sign In", type: .error, in: self)
+            return
+        }
+        
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] result, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                ShowMessage.show("Đăng nhập Google thất bại:", type: .error, in: self)
+                return
+            }
+            
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString else {
+                ShowMessage.show("Không thể lấy thông tin người dùng", type: .error, in: self)
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: user.accessToken.tokenString
+            )
+            
+            Auth.auth().signIn(with: credential) { [weak self] _, error in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                    ShowMessage.show("Đăng nhập thất bại", type: .error, in: self)
+                } else {
+                    ShowMessage.show("Đăng nhập Google thành công", in: self){
+                        self.dismiss(animated: true)
+                    }
+                }
+            }
+        }
     }
 }
