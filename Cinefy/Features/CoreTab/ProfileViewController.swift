@@ -8,6 +8,7 @@
 import UIKit
 import PanModal
 import FirebaseAuth
+import SDWebImage
 
 final class ProfileViewController: UIViewController{
     
@@ -54,6 +55,8 @@ final class ProfileViewController: UIViewController{
     private func setupUI(){
         view.backgroundColor = ColorName.black.color
         userImageView.tintColor = ColorName.white.color
+        userImageView.layer.cornerRadius = userImageView.frame.width / 2
+        userImageView.clipsToBounds = true
         usernameLabel.font = .systemFont(ofSize: 18, weight: .bold)
         usernameLabel.textColor = ColorName.white.color
         loginButton.tintColor = ColorName.lightYellow.color
@@ -64,6 +67,7 @@ final class ProfileViewController: UIViewController{
     
     private func updateUIForLoginState() {
         if isLoggedIn {
+            userImageView.sd_setImage(with: Auth.auth().currentUser?.photoURL)
             usernameLabel.text = Auth.auth().currentUser?.displayName ?? "Người dùng"
             usernameLabel.font = .systemFont(ofSize: 18, weight: .medium)
             emailLabel.text = Auth.auth().currentUser?.email ?? "Email"
@@ -72,6 +76,8 @@ final class ProfileViewController: UIViewController{
             registerButton.isHidden = true
             managerAccountButton.isHidden = false
         } else {
+            userImageView.image = UIImage(systemName: "person.circle")
+            userImageView.frame.size = CGSize(width: 20, height: 20)
             usernameLabel.text = "Tài khoản"
             emailLabel.isHidden = true
             loginButton.isHidden = false

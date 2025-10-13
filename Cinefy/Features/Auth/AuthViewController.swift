@@ -11,6 +11,7 @@ import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
 import Combine
+import FirebaseFirestore
 
 // MARK: - AuthViewController
 final class AuthViewController: UIViewController {
@@ -28,6 +29,7 @@ final class AuthViewController: UIViewController {
     
     // MARK: - Properties
     var mode: AuthMode = .login
+    let db = Firestore.firestore()
     private var isShortFormEnabled = true
     private var cancellables = Set<AnyCancellable>()
     
@@ -280,8 +282,11 @@ private extension AuthViewController {
             if let error = error {
                 ShowMessage.show(error.localizedDescription, type: .error, in: self)
             } else {
+                let user = UserModel(name: name, email: email, password: password, photoURL: nil)
+                saveUserData(user: user)
                 let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
                 changeRequest?.displayName = name
+                changeRequest?.photoURL = user.photoURL
                 changeRequest?.commitChanges { _ in
                     print("Đăng ký thành công")
                 }
@@ -329,6 +334,15 @@ private extension AuthViewController {
                     }
                 }
             }
+        }
+    }
+    
+    func saveUserData(user: UserModel) {
+        do {
+            try db.collection("users").addDocument(from: user)
+            print("User saved successfully!")
+        } catch {
+            print("Error writing user to Firestore: \(error)")
         }
     }
 }
