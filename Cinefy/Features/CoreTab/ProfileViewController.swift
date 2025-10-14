@@ -55,9 +55,8 @@ final class ProfileViewController: UIViewController{
     private func setupUI(){
         view.backgroundColor = ColorName.black.color
         userImageView.tintColor = ColorName.white.color
-        userImageView.layer.cornerRadius = userImageView.frame.width / 2
+        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
         userImageView.clipsToBounds = true
-        usernameLabel.font = .systemFont(ofSize: 18, weight: .bold)
         usernameLabel.textColor = ColorName.white.color
         loginButton.tintColor = ColorName.lightYellow.color
         registerButton.tintColor = ColorName.white.color
@@ -69,7 +68,7 @@ final class ProfileViewController: UIViewController{
         if isLoggedIn {
             userImageView.sd_setImage(with: Auth.auth().currentUser?.photoURL)
             usernameLabel.text = Auth.auth().currentUser?.displayName ?? "Người dùng"
-            usernameLabel.font = .systemFont(ofSize: 18, weight: .medium)
+            usernameLabel.font = .systemFont(ofSize: 14, weight: .bold)
             emailLabel.text = Auth.auth().currentUser?.email ?? "Email"
             emailLabel.isHidden = false
             loginButton.isHidden = true
@@ -77,7 +76,7 @@ final class ProfileViewController: UIViewController{
             managerAccountButton.isHidden = false
         } else {
             userImageView.image = UIImage(systemName: "person.circle")
-            userImageView.frame.size = CGSize(width: 20, height: 20)
+            usernameLabel.font = .systemFont(ofSize: 18, weight: .bold)
             usernameLabel.text = "Tài khoản"
             emailLabel.isHidden = true
             loginButton.isHidden = false
@@ -97,23 +96,15 @@ final class ProfileViewController: UIViewController{
 extension ProfileViewController{
     
     @IBAction func loginPressed(_ sender: UIButton) {
-        if isLoggedIn{
-            print("User already logged in")
-        }else{
-            let loginVC = AuthViewController()
-            loginVC.mode = .login
-            presentPanModal(loginVC)
-        }
+        let loginVC = AuthViewController()
+        loginVC.mode = .login
+        presentPanModal(loginVC)
     }
     
     @IBAction func registerPressed(_ sender: UIButton) {
-        if isLoggedIn{
-            print("User already logged in")
-        }else{
-            let registerVC = AuthViewController()
-            registerVC.mode = .register
-            presentPanModal(registerVC)
-        }
+        let registerVC = AuthViewController()
+        registerVC.mode = .register
+        presentPanModal(registerVC)
     }
     
     @IBAction func managerAccountPressed(_ sender: UIButton) {
@@ -143,7 +134,8 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
         switch index{
         case 0:
             if isLoggedIn{
-                print("đagn xem")
+                let viewingRecentVC = ViewingRecentViewController()
+                navigationController?.pushViewController(viewingRecentVC, animated: true)
             }else{
                 let loginVC = AuthViewController()
                 loginVC.mode = .login
@@ -177,9 +169,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
             let firebaseAuth = Auth.auth()
             do {
                 try firebaseAuth.signOut()
+                self.setupMenuItems()
                 DispatchQueue.main.async {
                     ShowMessage.show("Đăng xuất thành công", type: .success, in: self)
-                    self.setupMenuItems()
                     self.updateUIForLoginState()
                     self.menuTableView.reloadData()
                 }

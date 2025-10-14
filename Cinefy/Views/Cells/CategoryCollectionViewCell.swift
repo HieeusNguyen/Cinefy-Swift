@@ -11,6 +11,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     // MARK: - IBOutlets
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var arrowDownImageView: UIImageView!
     
     // MARK: - Properties
     static let identifier = "CategoryCollectionViewCell"
@@ -19,8 +20,15 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         titleLabel.textColor = ColorName.white.color
-        contentView.layer.cornerRadius = 14
-        contentView.layer.borderWidth = 2
+        titleLabel.attributedText = NSAttributedString(
+            string: "...",
+            attributes: [.font: UIFont.systemFont(ofSize: 11, weight: .medium)]
+        )
+        arrowDownImageView.tintColor = .white
+        arrowDownImageView.isHidden = true
+        contentView.layer.cornerRadius = 8.0
+        contentView.clipsToBounds = true
+        contentView.layer.borderWidth = 1
         contentView.layer.borderColor = ColorName.white.color.cgColor
         contentView.backgroundColor = .clear
     }

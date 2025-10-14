@@ -7,6 +7,8 @@
 
 import UIKit
 import AVFoundation
+import FirebaseAuth
+import FirebaseFirestore
 
 class PlayFilmViewController: UIViewController {
     
@@ -28,6 +30,8 @@ class PlayFilmViewController: UIViewController {
     private var isMovie: Bool = false
     private let categoryFilterHandler = CategoryFilterCollectionViewHandler()
     private let episodesHandler = EpisodesCollectionViewHandler()
+    private let db = Firestore.firestore()
+    private let user = Auth.auth().currentUser
     
     // CollectionView
     @IBOutlet weak var categoryFilterCollectionView: UICollectionView!
@@ -82,7 +86,7 @@ class PlayFilmViewController: UIViewController {
     }
     
     // MARK: - Setup UI
-    public func setupUI(){
+    private func setupUI(){
         
         self.descriptionFilm.textColor = ColorName.white.color
         self.descriptionFilm.font = .systemFont(ofSize: 14, weight: .medium)
@@ -151,11 +155,17 @@ extension PlayFilmViewController {
         Task {
             do {
                 self.filmData = try await APIService.getFilmInfo(slug: self.filmURL!)
-                self.titleFilm.text = filmData?.data.seoOnPage?.titleHead
+                
+                //Save ViewingRecent to Firebase
+                self.saveViewingRecent(filmData: filmData!)
+                
+                
                 self.categoryFilterHandler.movieData = filmData
                 self.episodesHandler.movieData = filmData
-                self.descriptionFilm.text = filmData?.data.seoOnPage?.descriptionHead
+
                 DispatchQueue.main.async {
+                    self.titleFilm.text = self.filmData?.data.seoOnPage?.titleHead
+                    self.descriptionFilm.text = self.filmData?.data.seoOnPage?.descriptionHead
                     self.categoryFilterCollectionView.reloadData()
                     self.episodesCollectionView.reloadData()
                     self.episodesCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: [])
@@ -263,5 +273,24 @@ class EpisodesCollectionViewHandler: NSObject, UICollectionViewDelegate, UIColle
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: (collectionView.frame.width - 33)/4, height: 30)
+    }
+}
+
+// MARK: - Save ViewingRecent Logic
+extension PlayFilmViewController{
+    
+    func saveViewingRecent(filmData: ResponseModel){
+        let viewedData = ViewedModel(
+            title: filmData.data.seoOnPage?.titleHead ?? "",
+            url: filmData.data.params?.slug ?? "",
+            photoURL: filmData.data.seoOnPage?.seoSchema?.image ?? "",
+            watchedAt: Timestamp(date: Date())
+        )
+        do{
+            try db.collection("users").document((user?.email)!).collection("viewing_recent").document(filmData.data.params?.slug ?? "").setData(from: viewedData)
+            print("Saved successfully ViewingRecent")
+        }catch{
+            print("Error: \(error)")
+        }
     }
 }

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_9" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -28,19 +29,19 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="titleLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IyT-kF-vZR" userLabel="titleLabel">
-                    <rect key="frame" x="20" y="144" width="400" height="21.666666666666657"/>
+                    <rect key="frame" x="20" y="154" width="400" height="21.666666666666657"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="subTitleLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FZU-Ld-qeR" userLabel="subTitleLabel">
-                    <rect key="frame" x="20" y="175.66666666666666" width="400" height="20.333333333333343"/>
+                    <rect key="frame" x="20" y="185.66666666666666" width="400" height="20.333333333333343"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="CpS-c5-s5b">
-                    <rect key="frame" x="20" y="226" width="400" height="166"/>
+                    <rect key="frame" x="20" y="236" width="400" height="166"/>
                     <subviews>
                         <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Tên hiển thị" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bDi-XN-tsL" userLabel="nameTextField" customClass="CustomTextField" customModule="Cinefy" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="400" height="34"/>
@@ -65,7 +66,7 @@
                     </subviews>
                 </stackView>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="hV3-IT-BSf">
-                    <rect key="frame" x="20" y="422" width="400" height="170.33333333333337"/>
+                    <rect key="frame" x="20" y="431.99999999999994" width="400" height="170.33333333333331"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KiM-kY-Cw3" userLabel="mainButton">
                             <rect key="frame" x="0.0" y="0.0" width="400" height="50"/>
@@ -108,7 +109,7 @@
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="hV3-IT-BSf" firstAttribute="top" secondItem="CpS-c5-s5b" secondAttribute="bottom" constant="30" id="3tq-QX-9j7"/>
-                <constraint firstItem="IyT-kF-vZR" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="20" id="Ryi-2U-8Ux"/>
+                <constraint firstItem="IyT-kF-vZR" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="30" id="Ryi-2U-8Ux"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="FZU-Ld-qeR" secondAttribute="trailing" constant="20" id="Th3-Sc-QG9"/>
                 <constraint firstItem="FZU-Ld-qeR" firstAttribute="top" secondItem="IyT-kF-vZR" secondAttribute="bottom" constant="10" id="aun-zs-gUZ"/>
                 <constraint firstItem="CpS-c5-s5b" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="bag-hD-rN5"/>

@@ -214,7 +214,7 @@ extension AuthViewController: PanModalPresentable {
     
     var shortFormHeight: PanModalHeight {
         if isShortFormEnabled {
-            return mode == .login ? .contentHeight(430) : .contentHeight(510)
+            return mode == .login ? .contentHeight(480) : .contentHeight(560)
         } else {
             return longFormHeight
         }
@@ -282,13 +282,14 @@ private extension AuthViewController {
             if let error = error {
                 ShowMessage.show(error.localizedDescription, type: .error, in: self)
             } else {
-                let user = UserModel(name: name, email: email, password: password, photoURL: nil)
+                let user = UserModel(name: name, email: email, password: password, photoURL: nil, createdAt: Timestamp(date: Date()))
                 saveUserData(user: user)
                 let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
                 changeRequest?.displayName = name
                 changeRequest?.photoURL = user.photoURL
                 changeRequest?.commitChanges { _ in
-                    print("Đăng ký thành công")
+                    ShowMessage.show("Đăng ký thành công", type: .success, in: self)
+                    self.dismiss(animated: true)
                 }
             }
         }
@@ -299,38 +300,74 @@ private extension AuthViewController {
             ShowMessage.show("Lỗi cấu hình Google Sign In", type: .error, in: self)
             return
         }
-        
+
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
-        
+
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] result, error in
             guard let self = self else { return }
-            
+
             if let error = error {
-                ShowMessage.show("Đăng nhập Google thất bại:", type: .error, in: self)
+                ShowMessage.show("Đăng nhập Google thất bại", type: .error, in: self)
                 return
             }
-            
+
             guard let user = result?.user,
                   let idToken = user.idToken?.tokenString else {
                 ShowMessage.show("Không thể lấy thông tin người dùng", type: .error, in: self)
                 return
             }
-            
+
             let credential = GoogleAuthProvider.credential(
                 withIDToken: idToken,
                 accessToken: user.accessToken.tokenString
             )
-            
-            Auth.auth().signIn(with: credential) { [weak self] _, error in
+
+            Auth.auth().signIn(with: credential) { [weak self] result, error in
                 guard let self = self else { return }
-                
+
                 if let error = error {
-                    print("Error: \(error.localizedDescription)")
-                    ShowMessage.show("Đăng nhập thất bại", type: .error, in: self)
-                } else {
-                    ShowMessage.show("Đăng nhập Google thành công", in: self){
-                        self.dismiss(animated: true)
+                    ShowMessage.show("Đăng nhập thất bại: \(error.localizedDescription)", type: .error, in: self)
+                    return
+                }
+
+                guard let user = result?.user else { return }
+                
+                let userRef = db.collection("users").document(user.email ?? "unknown")
+
+                // Kiểm tra xem user đã tồn tại trong Firestore chưa
+                userRef.getDocument { document, error in
+                    if let error = error {
+                        print("Lỗi kiểm tra người dùng: \(error)")
+                        return
+                    }
+
+                    if let document = document, document.exists {
+                        // User đã tồn tại thì không cần thêm mới
+                        print("User đã tồn tại trong Firestore")
+                        ShowMessage.show("Đăng nhập Google thành công", type: .success, in: self){
+                            self.dismiss(animated: true)
+                        }
+                        
+                    } else {
+                        // User chưa tồn tại thì thêm mới vào Firestore
+                        let userModel = UserModel(
+                            name: user.displayName ?? "",
+                            email: user.email ?? "",
+                            password: "",
+                            photoURL: user.photoURL,
+                            createdAt: Timestamp(date: Date())
+                        )
+
+                        do {
+                            try userRef.collection("info").addDocument(from: userModel)
+                            ShowMessage.show("Đăng nhập Google thành công", type: .success, in: self) {
+                                self.dismiss(animated: true)
+                            }
+                        } catch {
+                            print("Lỗi lưu dữ liệu: \(error)")
+                            ShowMessage.show("Không thể lưu thông tin người dùng", type: .error, in: self)
+                        }
                     }
                 }
             }
@@ -339,7 +376,7 @@ private extension AuthViewController {
     
     func saveUserData(user: UserModel) {
         do {
-            try db.collection("users").addDocument(from: user)
+            try db.collection("users").document(user.email).collection("info").addDocument(from: user)
             print("User saved successfully!")
         } catch {
             print("Error writing user to Firestore: \(error)")

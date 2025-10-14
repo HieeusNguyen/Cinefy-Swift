@@ -91,7 +91,7 @@ final class HomeViewController: UIViewController {
     }
     
     // MARK: - Setup UI
-    func setupUI(){
+    private func setupUI(){
         self.view.backgroundColor = ColorName.primary.color
         
         //Category CollectionView
@@ -192,6 +192,9 @@ class CategoryCollectionViewHandler: NSObject, UICollectionViewDelegate, UIColle
             for: indexPath
         ) as! CategoryCollectionViewCell
         cell.titleLabel.text = categories[indexPath.row]
+        if indexPath.row == categories.count{
+            cell.arrowDownImageView.isHidden = false
+        }
         return cell
     }
 }
