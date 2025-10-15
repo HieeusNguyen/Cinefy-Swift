@@ -2,7 +2,8 @@
 ## BMPlayer
 - Do thư viện này đã quá cũ nên nhiều chức năng không còn hoạt động trên iOS 13.0
 - Trong dự án này, đã sửa chức năng FullScreen trong source code của thư viện
-`@objc fileprivate func fullScreenButtonPressed() {
+`
+@objc fileprivate func fullScreenButtonPressed() {
     controlView.updateUI(!self.isFullScreen)
     
     if #available(iOS 16.0, *) {
@@ -20,5 +21,9 @@
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
         }
     }
-}`
+}
+`
 
+## FSPagerView
+- Để sửa cornerRadius cho ảnh thì cũng phải sửa trong source code của thư viện
+- Sửa như nào thì không nhớ nữa 🙂
