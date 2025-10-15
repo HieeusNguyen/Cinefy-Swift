@@ -2,7 +2,7 @@
 ## BMPlayer
 - Do thư viện này đã quá cũ nên nhiều chức năng không còn hoạt động trên iOS 13.0
 - Trong dự án này, đã sửa chức năng FullScreen trong source code của thư viện
-`
+```swift
 @objc fileprivate func fullScreenButtonPressed() {
     controlView.updateUI(!self.isFullScreen)
     
@@ -22,7 +22,6 @@
         }
     }
 }
-`
 
 ## FSPagerView
 - Để sửa cornerRadius cho ảnh thì cũng phải sửa trong source code của thư viện
