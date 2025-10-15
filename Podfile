@@ -14,6 +14,7 @@ target 'Cinefy' do
   pod 'FirebaseFirestore'
   pod 'FirebaseAuth'
   pod 'GoogleSignIn'
+  pod 'BMPlayer', '~> 1.3.0'
 end
 
 post_install do |installer|

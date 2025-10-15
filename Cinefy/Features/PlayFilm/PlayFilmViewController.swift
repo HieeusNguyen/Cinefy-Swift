@@ -9,16 +9,12 @@ import UIKit
 import AVFoundation
 import FirebaseAuth
 import FirebaseFirestore
+import BMPlayer
 
 class PlayFilmViewController: UIViewController {
     
     // MARK: - IBOutlets
-    @IBOutlet weak var videoContainerView: UIView!
-    @IBOutlet weak var frontView: UIView!
-    private var player: AVPlayer?
-    private var playerLayer: AVPlayerLayer?
-    @IBOutlet weak var fullScreenButton: UIButton!
-    @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var player: BMPlayer!
     @IBOutlet weak var titleFilm: UILabel!
     @IBOutlet weak var descriptionFilm: UILabel!
     @IBOutlet weak var episodesLabel: UILabel!
@@ -26,7 +22,6 @@ class PlayFilmViewController: UIViewController {
     // MARK: - Properties
     var filmURL: String?
     private var filmData: ResponseModel?
-    private var isFullscreen: Bool = false
     private var isMovie: Bool = false
     private let categoryFilterHandler = CategoryFilterCollectionViewHandler()
     private let episodesHandler = EpisodesCollectionViewHandler()
@@ -35,7 +30,6 @@ class PlayFilmViewController: UIViewController {
     
     // CollectionView
     @IBOutlet weak var categoryFilterCollectionView: UICollectionView!
-    
     @IBOutlet weak var episodesCollectionView: UICollectionView!
     
     // Constraints
@@ -47,6 +41,7 @@ class PlayFilmViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
+        player.autoPlay()
     }
     
     override func viewDidLoad() {
@@ -58,31 +53,32 @@ class PlayFilmViewController: UIViewController {
         self.episodesCollectionView.dataSource = episodesHandler
         self.episodesHandler.delegate = self
         
+        player.delegate = self
+        
         // Call API
         self.fetchData()
         
         // Setup UI
         self.setupUI()
+        
+        player.backBlock = { [unowned self] (isFullScreen) in
+            if isFullScreen == true { return }
+            let _ = self.navigationController?.popViewController(animated: true)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        player?.pause()
+        player.pause(allowAutoPlay: true)
+    }
+    
+    deinit{
+        player.prepareToDealloc()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if isFullscreen {
-            playerLayer?.frame = view.bounds
-            aspectRatioConstraint.isActive = false
-            bottomToLabelConstraint.isActive = false
-            bottomToSafeViewAreaConstraint?.isActive = true
-        } else {
-            playerLayer?.frame = videoContainerView.bounds
-            aspectRatioConstraint.isActive = true
-            bottomToSafeViewAreaConstraint?.isActive = false
-            bottomToLabelConstraint.isActive = true
-        }
+        
     }
     
     // MARK: - Setup UI
@@ -91,7 +87,7 @@ class PlayFilmViewController: UIViewController {
         self.descriptionFilm.textColor = ColorName.white.color
         self.descriptionFilm.font = .systemFont(ofSize: 14, weight: .medium)
         self.view.backgroundColor = ColorName.primary.color
-        self.videoContainerView.translatesAutoresizingMaskIntoConstraints = false
+        
         
         //Category Filter CollectionView
         if let flowLayout = categoryFilterCollectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
@@ -119,34 +115,14 @@ class PlayFilmViewController: UIViewController {
     
     // MARK: - Setup Player
     private func setupPlayer(with url: URL) {
-        let newItem = AVPlayerItem(url: url)
         
-        if player == nil {
-            player = AVPlayer(playerItem: newItem)
-            playerLayer = AVPlayerLayer(player: player)
-            playerLayer?.videoGravity = .resizeAspect
-            playerLayer?.frame = videoContainerView.bounds
-            videoContainerView.layer.addSublayer(playerLayer!)
-            frontView.backgroundColor = .clear
-            videoContainerView.bringSubviewToFront(frontView)
-        } else {
-            player?.replaceCurrentItem(with: newItem)
-        }
-        
-        player?.play()
+        let asset = BMPlayerResource(url: URL(string: url.absoluteString)!,
+                                     name: "")
+        player.setVideo(resource: asset)
     }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return isFullscreen ? .landscape : .portrait
-    }
-    
-    override var prefersHomeIndicatorAutoHidden: Bool {
-        return isFullscreen
-    }
-    
-    override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
-        return isFullscreen ? .all : []
-    }
+
+
 }
 
 // MARK: - Fetch API
@@ -186,25 +162,6 @@ extension PlayFilmViewController {
 
 // MARK: - Actions
 extension PlayFilmViewController: EpisodesCollectionViewHandlerDelegate{
-    @IBAction func fullScreenPressed(_ sender: UIButton) {
-        //        isFullscreen.toggle()
-        //        if let windowScene = view.window?.windowScene {
-        //            let orientation: UIInterfaceOrientationMask = isFullscreen ? .landscapeRight : .portrait
-        //            let geometryPreferences = UIWindowScene.GeometryPreferences.iOS(interfaceOrientations: orientation)
-        //            windowScene.requestGeometryUpdate(geometryPreferences) { error in
-        //                print("Lỗi xoay màn hình: \(error)")
-        //            }
-        //        }
-        
-        //        UIView.animate(withDuration: 0.3) {
-        //            self.view.setNeedsLayout()
-        //            self.view.layoutIfNeeded()
-        //        }
-    }
-    
-    @IBAction func backPressed(_ sender: UIButton) {
-        navigationController?.popViewController(animated: true)
-    }
     
     func didSelectEpisode(with url: URL) {
         setupPlayer(with: url)
@@ -292,5 +249,40 @@ extension PlayFilmViewController{
         }catch{
             print("Error: \(error)")
         }
+    }
+}
+
+extension PlayFilmViewController: BMPlayerDelegate{
+    func bmPlayer(player: BMPlayer, playerOrientChanged isFullscreen: Bool) {
+      player.snp.remakeConstraints { (make) in
+        make.top.equalTo(view.snp.top)
+        make.left.equalTo(view.snp.left)
+        make.right.equalTo(view.snp.right)
+        if isFullscreen {
+          make.bottom.equalTo(view.snp.bottom)
+        } else {
+          make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0).priority(500)
+        }
+      }
+    }
+    
+    // Call back when playing state changed, use to detect is playing or not
+    func bmPlayer(player: BMPlayer, playerIsPlaying playing: Bool) {
+      print("| BMPlayerDelegate | playerIsPlaying | playing - \(playing)")
+    }
+    
+    // Call back when playing state changed, use to detect specefic state like buffering, bufferfinished
+    func bmPlayer(player: BMPlayer, playerStateDidChange state: BMPlayerState) {
+      print("| BMPlayerDelegate | playerStateDidChange | state - \(state)")
+    }
+    
+    // Call back when play time change
+    func bmPlayer(player: BMPlayer, playTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval) {
+      //        print("| BMPlayerDelegate | playTimeDidChange | \(currentTime) of \(totalTime)")
+    }
+    
+    // Call back when the video loaded duration changed
+    func bmPlayer(player: BMPlayer, loadedTimeDidChange loadedDuration: TimeInterval, totalDuration: TimeInterval) {
+      //        print("| BMPlayerDelegate | loadedTimeDidChange | \(loadedDuration) of \(totalDuration)")
     }
 }

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_9" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -10,18 +11,12 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PlayFilmViewController" customModule="Cinefy" customModuleProvider="target">
             <connections>
-                <outlet property="aspectRatioConstraint" destination="EPv-Tg-diL" id="0lb-n2-CPv"/>
-                <outlet property="backButton" destination="MUZ-oz-lNa" id="8m0-Zq-f4K"/>
-                <outlet property="bottomToLabelConstraint" destination="phI-1W-U5z" id="V8J-4P-DLz"/>
-                <outlet property="bottomToSafeViewAreaConstraint" destination="Muu-Xw-Dwb" id="LiP-U1-bio"/>
                 <outlet property="categoryFilterCollectionView" destination="4XM-LK-Bil" id="qft-Gv-lQh"/>
                 <outlet property="descriptionFilm" destination="mcD-fj-12v" id="7D1-n2-asV"/>
                 <outlet property="episodesCollectionView" destination="mHg-kN-eMX" id="AQZ-P9-KOW"/>
                 <outlet property="episodesLabel" destination="Uo4-Bz-LOe" id="KwJ-GF-Zcx"/>
-                <outlet property="frontView" destination="rAW-S6-RGU" id="0Ue-Hb-3dh"/>
-                <outlet property="fullScreenButton" destination="Igt-hg-NgS" id="fWn-Mp-H0W"/>
+                <outlet property="player" destination="iVN-xW-8Bf" id="dIB-9T-5rI"/>
                 <outlet property="titleFilm" destination="FCi-vL-Tzx" id="e3Z-VZ-ZlS"/>
-                <outlet property="videoContainerView" destination="Ef7-Ge-Jxn" id="Wg1-LP-pam"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -30,57 +25,11 @@
             <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ef7-Ge-Jxn" userLabel="VideoView">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iVN-xW-8Bf" customClass="BMPlayer" customModule="BMPlayer">
                     <rect key="frame" x="0.0" y="123.99999999999999" width="440" height="247.66666666666663"/>
-                    <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rAW-S6-RGU" userLabel="FrontView">
-                            <rect key="frame" x="0.0" y="0.0" width="440" height="247.66666666666666"/>
-                            <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MUZ-oz-lNa" userLabel="backButton">
-                                    <rect key="frame" x="8" y="8" width="30" height="30"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="30" id="3mP-gS-fU7"/>
-                                        <constraint firstAttribute="width" constant="30" id="Od8-Xo-RUY"/>
-                                    </constraints>
-                                    <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="chevron.backward" catalog="system">
-                                        <color key="baseForegroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    </buttonConfiguration>
-                                    <connections>
-                                        <action selector="backPressed:" destination="-1" eventType="touchUpInside" id="3NA-Xo-kne"/>
-                                    </connections>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Igt-hg-NgS" userLabel="fullScreenButton">
-                                    <rect key="frame" x="406" y="213.66666666666669" width="30" height="30"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="30" id="5U4-xu-I3c"/>
-                                        <constraint firstAttribute="width" constant="30" id="UPi-Qw-KXE"/>
-                                    </constraints>
-                                    <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="arrow.up.left.and.arrow.down.right" catalog="system">
-                                        <color key="baseForegroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    </buttonConfiguration>
-                                    <connections>
-                                        <action selector="fullScreenPressed:" destination="-1" eventType="touchUpInside" id="e4h-bQ-RUf"/>
-                                    </connections>
-                                </button>
-                            </subviews>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                            <constraints>
-                                <constraint firstItem="MUZ-oz-lNa" firstAttribute="top" secondItem="rAW-S6-RGU" secondAttribute="top" constant="8" id="Fd7-TQ-MfI"/>
-                                <constraint firstAttribute="bottom" secondItem="Igt-hg-NgS" secondAttribute="bottom" constant="4" id="HT6-4J-yix"/>
-                                <constraint firstAttribute="trailing" secondItem="Igt-hg-NgS" secondAttribute="trailing" constant="4" id="fvw-Nz-6ss"/>
-                                <constraint firstItem="MUZ-oz-lNa" firstAttribute="leading" secondItem="rAW-S6-RGU" secondAttribute="leading" constant="8" id="tBD-xq-yIC"/>
-                            </constraints>
-                        </view>
-                    </subviews>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
-                        <constraint firstItem="rAW-S6-RGU" firstAttribute="leading" secondItem="Ef7-Ge-Jxn" secondAttribute="leading" id="D9S-tS-6gE"/>
-                        <constraint firstAttribute="width" secondItem="Ef7-Ge-Jxn" secondAttribute="height" multiplier="16:9" id="EPv-Tg-diL"/>
-                        <constraint firstAttribute="trailing" secondItem="rAW-S6-RGU" secondAttribute="trailing" id="TY4-zv-coP"/>
-                        <constraint firstItem="rAW-S6-RGU" firstAttribute="top" secondItem="Ef7-Ge-Jxn" secondAttribute="top" id="bsp-vx-cO1"/>
-                        <constraint firstAttribute="bottom" secondItem="rAW-S6-RGU" secondAttribute="bottom" id="sFZ-hM-aiD"/>
+                        <constraint firstAttribute="width" secondItem="iVN-xW-8Bf" secondAttribute="height" multiplier="16:9" id="fSW-lX-yID"/>
                     </constraints>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FCi-vL-Tzx" userLabel="titleFilm">
@@ -168,37 +117,29 @@
             <constraints>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="mHg-kN-eMX" secondAttribute="trailing" constant="20" id="3tX-mk-lD7"/>
                 <constraint firstItem="Uo4-Bz-LOe" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="9iO-ze-L84"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="Ef7-Ge-Jxn" secondAttribute="trailing" id="CbK-zy-PO2"/>
                 <constraint firstItem="4XM-LK-Bil" firstAttribute="top" secondItem="2Qb-0L-RkZ" secondAttribute="bottom" constant="5" id="EGF-5g-ThQ"/>
                 <constraint firstItem="FCi-vL-Tzx" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="Et8-VY-4y4"/>
                 <constraint firstItem="mHg-kN-eMX" firstAttribute="top" secondItem="Uo4-Bz-LOe" secondAttribute="bottom" constant="10" id="Fiu-ch-XRU"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="mcD-fj-12v" secondAttribute="trailing" constant="20" id="IXI-Hc-Hrd"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="Ef7-Ge-Jxn" secondAttribute="bottom" id="Muu-Xw-Dwb"/>
+                <constraint firstItem="FCi-vL-Tzx" firstAttribute="top" secondItem="iVN-xW-8Bf" secondAttribute="bottom" constant="10" id="RbJ-Eo-oTO"/>
                 <constraint firstItem="mcD-fj-12v" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="U1W-mK-tq7"/>
                 <constraint firstItem="4XM-LK-Bil" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="VX9-Qh-aDN"/>
                 <constraint firstItem="2Qb-0L-RkZ" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="Wwa-o9-Pf1"/>
                 <constraint firstItem="mHg-kN-eMX" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="XYL-BX-pc3"/>
-                <constraint firstItem="Ef7-Ge-Jxn" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="dRB-qf-CFK"/>
                 <constraint firstItem="2Qb-0L-RkZ" firstAttribute="top" secondItem="FCi-vL-Tzx" secondAttribute="bottom" constant="10" id="hJV-1G-6wd"/>
+                <constraint firstItem="iVN-xW-8Bf" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="hba-HZ-zuY"/>
+                <constraint firstItem="iVN-xW-8Bf" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="i1b-eh-ajf"/>
                 <constraint firstItem="mcD-fj-12v" firstAttribute="top" secondItem="4XM-LK-Bil" secondAttribute="bottom" constant="10" id="kcm-Xh-S2l"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="FCi-vL-Tzx" secondAttribute="trailing" constant="20" id="lcj-op-lvU"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="iVN-xW-8Bf" secondAttribute="trailing" id="mcY-ql-9xC"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="4XM-LK-Bil" secondAttribute="trailing" id="ohD-Ep-L1P"/>
-                <constraint firstItem="FCi-vL-Tzx" firstAttribute="top" secondItem="Ef7-Ge-Jxn" secondAttribute="bottom" constant="10" id="phI-1W-U5z"/>
-                <constraint firstItem="Ef7-Ge-Jxn" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="pnT-en-kvo"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="mHg-kN-eMX" secondAttribute="bottom" constant="20" id="w11-8M-CSy"/>
                 <constraint firstItem="Uo4-Bz-LOe" firstAttribute="top" secondItem="mcD-fj-12v" secondAttribute="bottom" constant="20" id="xzA-ZL-gF0"/>
             </constraints>
-            <variation key="default">
-                <mask key="constraints">
-                    <exclude reference="Muu-Xw-Dwb"/>
-                </mask>
-            </variation>
             <point key="canvasLocation" x="27.272727272727273" y="19.456066945606697"/>
         </view>
     </objects>
     <resources>
-        <image name="arrow.up.left.and.arrow.down.right" catalog="system" width="128" height="115"/>
-        <image name="chevron.backward" catalog="system" width="97" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
