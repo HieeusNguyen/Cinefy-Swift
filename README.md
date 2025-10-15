@@ -22,7 +22,7 @@
         }
     }
 }
-
+```
 ## FSPagerView
 - Để sửa cornerRadius cho ảnh thì cũng phải sửa trong source code của thư viện
 - Sửa như nào thì không nhớ nữa 🙂
