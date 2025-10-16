@@ -68,6 +68,7 @@ private extension AuthViewController {
         mainButton.tintColor = ColorName.lightYellow.color
         googleButton.tintColor = .darkGray
         googleButton.configuration?.imagePadding = 10
+        googleButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         googleButton.setAttributedTitle(
             NSAttributedString(
                 string: "Đăng nhập bằng Google",

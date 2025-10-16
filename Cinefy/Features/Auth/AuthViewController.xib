@@ -91,7 +91,9 @@
                                 <constraint firstAttribute="height" constant="50" id="jby-3K-E4v"/>
                             </constraints>
                             <state key="normal" title="Button"/>
-                            <buttonConfiguration key="configuration" style="filled" image="apple.logo" catalog="system" title="Đăng nhập bằng Google"/>
+                            <buttonConfiguration key="configuration" style="filled" image="google_icon" title="Đăng nhập bằng Google" titleAlignment="leading">
+                                <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="small"/>
+                            </buttonConfiguration>
                             <connections>
                                 <action selector="googleButtonPressed:" destination="-1" eventType="touchUpInside" id="6qd-VK-cbB"/>
                             </connections>
@@ -125,7 +127,7 @@
         </view>
     </objects>
     <resources>
-        <image name="apple.logo" catalog="system" width="105" height="128"/>
+        <image name="google_icon" width="48" height="48"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
