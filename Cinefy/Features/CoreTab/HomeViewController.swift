@@ -206,6 +206,8 @@ extension HomeViewController: FSPagerViewDelegate, FSPagerViewDataSource {
         if let thumbURL = URL(string: "\(APIService.DOMAIN_CDN_IMAGE)\(homeData?.data.items?[index].thumbURL ?? "")") {
             cell.imageView?.sd_setImage(with: thumbURL, placeholderImage: UIImage(named: "placeholder"))
         }
+        cell.layer.cornerRadius = 8
+        cell.clipsToBounds = true
         return cell
     }
     

@@ -108,7 +108,8 @@ extension ProfileViewController{
     }
     
     @IBAction func managerAccountPressed(_ sender: UIButton) {
-        print("Quan ly nguoi dung")
+        let editProfileVC = EditProfileViewController()
+        navigationController?.pushViewController(editProfileVC, animated: true)
     }
 }
 

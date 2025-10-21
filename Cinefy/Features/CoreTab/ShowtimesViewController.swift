@@ -6,11 +6,8 @@
 //
 
 import UIKit
-import BMPlayer
 
 class ShowtimesViewController: UIViewController {
-
-    @IBOutlet weak var player: BMPlayer!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
